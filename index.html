@@ -1,0 +1,719 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#EEF6FF"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="My Faves"><title>My Faves ♡</title><style>
+:root{--main:#6E9FD4;--bg:#EEF6FF;--sub:#C9E1FA;--ink:#283342;--card:#fff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}main{max-width:550px;margin:auto;min-height:100dvh;padding:20px 15px 100px}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:13px;color:var(--main);font-weight:700}.heading{font-size:25px;font-weight:800;margin:5px 0 15px}.chips{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.chip{white-space:nowrap;border:0;background:white;padding:8px 13px;border-radius:30px;color:#465265}.chip.active{background:var(--main);color:white}.panel{background:var(--card);border-radius:19px;padding:13px;margin-bottom:14px;box-shadow:0 2px 10px #00000006}.week,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}.weekday{text-align:center;font-size:11px;color:#8591a1;padding:8px 0}.date{position:relative;min-width:0;min-height:65px;border:0;background:transparent;border-radius:9px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;color:inherit}.date.selected{background:var(--sub)}.date .num{font-size:12px;font-weight:600}.date .dots{display:flex;gap:2px}.dot{height:5px;width:5px;border-radius:50%}.tiny{font-size:9px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.avatar{width:27px;height:27px;object-fit:cover;border-radius:50%;background:var(--sub)}.avatar.square{border-radius:6px}.date.photo-bg{background-size:cover;background-position:center}.date.photo-bg .num{background:#ffffffdc;padding:2px 5px;border-radius:8px}.date.photo-bg.selected{outline:3px solid var(--main)}.event{display:flex;align-items:center;gap:10px;padding:10px 3px;border-bottom:1px solid #eef0f3}.event:last-child{border-bottom:0}.event-delete{border:0;border-radius:9px;background:#fde9ed;color:#b43755;padding:9px 11px;font-size:12px;font-weight:700;flex-shrink:0}.stripe{width:4px;align-self:stretch;border-radius:8px}.event-text{flex:1;min-width:0}.muted{color:#8993a0;font-size:12px}.event strong{font-size:14px}.tabs{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);display:flex;justify-content:space-around;padding:10px max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom));border-top:1px solid #eee;z-index:5}.tab{border:0;background:none;color:#8c96a3;font-size:11px;display:flex;align-items:center;flex-direction:column;gap:4px}.tab b{font-size:22px}.tab.active{color:var(--main)}.btn{border:0;background:var(--main);color:#fff;padding:12px 16px;border-radius:12px;font-weight:700}.btn.secondary{background:var(--sub);color:var(--ink)}.btn.danger{background:#f9e4e7;color:#b8435c}.btn.small{padding:7px 10px;font-size:12px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.stack{display:flex;flex-direction:column;gap:10px}.field{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}.field input,.field select,.field textarea{width:100%;border:1px solid #e0e4e9;background:white;border-radius:10px;padding:11px;color:#283342}.field input[type=color]{height:43px;padding:4px}.field input[type=checkbox]{width:auto}.profile{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}.profile img,.profile .placeholder{width:53px;height:53px;border-radius:14px;object-fit:cover}.placeholder{display:grid;place-items:center;color:white;font-weight:700;font-size:21px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.swatch{height:35px;border-radius:10px;border:2px solid #ffffff;outline:1px solid #e0e0e0}.swatch.chosen{outline:3px solid var(--main)}dialog{border:0;border-radius:20px;width:calc(100% - 24px);max-width:480px;max-height:88dvh;overflow:auto;padding:20px;box-shadow:0 15px 60px #0004}dialog::backdrop{background:#0008}.detail-photo{width:100%;max-height:55vh;object-fit:contain;border-radius:14px;background:#f1f2f5}.detail-link{display:block;text-align:center;text-decoration:none}.detail-memo{white-space:normal;line-height:1.6;overflow-wrap:anywhere}h2{font-size:20px;margin:0 0 14px}.empty{text-align:center;padding:24px;color:#8993a0;font-size:13px}.note{font-size:12px;line-height:1.6;color:#788391}.hidden{display:none!important}
+/* Photo themes: overlay opacity 0 = original, 100 = solid filter */
+main{position:relative;isolation:isolate}
+main.photo-full::before{content:"";position:fixed;inset:0;z-index:-1;background-image:linear-gradient(var(--photo-tint),var(--photo-tint)),var(--photo-url);background-size:cover;background-position:center;pointer-events:none}
+main.photo-calendar .calendar-panel{background-image:linear-gradient(var(--photo-tint),var(--photo-tint)),var(--photo-url);background-size:cover;background-position:center}
+main.photo-header .calendar-header{background-image:linear-gradient(var(--photo-tint),var(--photo-tint)),var(--photo-url);background-size:cover;background-position:center;border-radius:18px;padding:14px;margin-bottom:12px}
+main.photo-full .panel,main.photo-calendar .calendar-panel{background-color:rgba(255,255,255,.82)}
+main.photo-full .panel{backdrop-filter:blur(5px)}
+main.photo-dark .calendar-header,main.photo-dark.photo-calendar .calendar-panel{color:#fff}
+main.photo-dark.photo-calendar .weekday,main.photo-dark.photo-calendar .date{color:#fff}
+main.photo-dark.photo-calendar .date.selected{color:#283342}
+.photo-preview{height:95px;border-radius:12px;background-size:cover;background-position:center;border:1px solid #ddd}
+.photo-settings{border:1px solid #e4e7ec;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:9px}
+.photo-settings input[type=range]{width:100%}
+
+/* v3.0 appearance, responsive layout */
+:root{--panel-opacity:.86;--muted-ink:#515C6C;--input-bg:#fff;--input-ink:#283342;--line-color:#e2e4ea}
+.panel,main.photo-full .panel,main.photo-calendar .calendar-panel{background:color-mix(in srgb,var(--card) calc(var(--panel-opacity)*100%),transparent);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+main.photo-calendar .calendar-panel{background-image:linear-gradient(var(--photo-tint),var(--photo-tint)),var(--photo-url);background-size:cover;background-position:center}
+body,main,.panel,.field,.field label,.note,.muted,.weekday,.date,.chip,.event,.tabs{color:var(--ink)}
+.muted,.note,.weekday{color:var(--muted-ink)}
+.panel,.row,.stack,.field,.event,.photo-settings{min-width:0;max-width:100%}
+.row{flex-wrap:wrap}.row>*{min-width:0}.row .btn{flex-shrink:0}
+.field input,.field select,.field textarea,.photo-settings select,select{max-width:100%;min-width:0;background:var(--input-bg);color:var(--input-ink);border-color:var(--line-color)}
+.photo-settings{overflow:hidden}.photo-settings input[type=time],.photo-settings select{width:100%;max-width:100%;display:block}
+.panel input[type=time],.panel input[type=date]{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.chip{background:var(--card);color:var(--ink)}.chip.active{color:white}
+.tabs{background:color-mix(in srgb,var(--card) 94%,transparent);border-color:var(--line-color)}
+.event{border-color:var(--line-color)}.event-text{overflow-wrap:anywhere}
+dialog{background:var(--card);color:var(--ink);max-width:min(480px,calc(100vw - 24px));padding:20px;box-sizing:border-box}
+dialog .row{flex-wrap:wrap}dialog .row button{flex:1 1 auto}
+.dark-ui .tab{color:#c4becd}.dark-ui .tab.active{color:#c7b6ff}.dark-ui .event-delete{background:#533541;color:#ffb7c8}
+.dark-ui .btn.secondary{background:#484256;color:#fff}.dark-ui .btn.danger{background:#603644;color:#ffd0da}
+@media(max-width:420px){main{padding:14px 11px 100px}.panel{padding:12px}.tabs{padding-left:3px;padding-right:3px}.tab{font-size:10px}.tab b{font-size:20px}}
+
+/* v3.1 iOS time control containment */
+html,body,#app,main{width:100%;max-width:100%;overflow-x:clip}
+.panel{width:100%;min-width:0;overflow:hidden}
+.panel .field{width:100%;min-width:0;overflow:hidden;display:block}
+.panel input[type="time"]{display:block;box-sizing:border-box;inline-size:100%;min-inline-size:0;max-inline-size:100%;-webkit-appearance:none;appearance:none;overflow:hidden;margin:0;border-radius:10px}
+.panel input[type="time"]::-webkit-date-and-time-value{min-width:0;text-align:center}
+.panel input[type="time"]::-webkit-datetime-edit{min-width:0;padding:0}
+.day-modal .daily-event{padding:13px;border-radius:13px;background:var(--input-bg);border:1px solid var(--line-color);margin:8px 0;cursor:pointer}
+.day-modal .daily-cover{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:8px}
+
+/* v3.2 daily feed */
+#modal:has(.day-modal){width:min(550px,calc(100vw - 20px));max-width:550px;max-height:86dvh;overflow-y:auto}
+.feed-card{border:1px solid var(--line-color);border-radius:17px;overflow:hidden;margin:12px 0;background:var(--input-bg);color:var(--input-ink)}
+.feed-card.scrap{background:#fff0f7;color:#443548}.feed-card.dark{background:#252432;color:#fff}
+.feed-card .feed-pad{padding:13px}.feed-card img{width:100%;height:auto;max-height:360px;object-fit:cover;display:block}
+.feed-card .feed-media{position:relative}.feed-card .feed-sticker{position:absolute;top:10px;right:14px;font-size:35px;filter:drop-shadow(0 2px 2px #0003)}
+.feed-card .feed-caption{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}.feed-card .feed-tag{font-size:12px;opacity:.75}
+.feed-card .feed-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.feed-card .feed-actions button{flex:1}
+.feed-photos{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory}.feed-photos img{min-width:100%;width:100%;scroll-snap-align:start;aspect-ratio:4/3;object-fit:cover}
+.feed-form .field{display:block;width:100%;min-width:0}.feed-form input,.feed-form textarea,.feed-form select{width:100%;max-width:100%;box-sizing:border-box}
+.feed-preview{display:flex;gap:6px;overflow-x:auto}.feed-preview img{width:70px;height:70px;object-fit:cover;border-radius:8px}
+
+/* v3.4 iOS modal sizing */
+dialog{overflow-x:hidden;max-width:calc(100vw - 28px)}
+dialog form,dialog .stack,dialog .field{width:100%;max-width:100%;min-width:0}
+dialog .field{overflow:hidden}
+dialog input[type="date"],dialog input[type="time"]{display:block;width:100%;max-width:100%;min-width:0;min-inline-size:0;box-sizing:border-box;appearance:none;-webkit-appearance:none;overflow:hidden}
+dialog input[type="date"]::-webkit-date-and-time-value,dialog input[type="time"]::-webkit-date-and-time-value{min-width:0;text-align:center}
+dialog .grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* v3.5 couple room sketch layout */
+.couple-main-card{padding:20px!important}
+.couple-main-layout{display:flex;align-items:center;gap:18px;min-width:0}
+.couple-main-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:6px;overflow-wrap:anywhere}
+.couple-main-info>strong{font-size:23px}
+.couple-dday{font-size:24px;font-weight:800;color:var(--main);line-height:1.25}
+.couple-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;flex:none;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:23px}
+.couple-avatar.large{width:100px;height:100px;font-size:38px}
+.couple-pins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.couple-pin{min-width:0;display:flex;align-items:center;flex-direction:column;gap:6px;text-align:center;background:var(--input-bg);color:var(--input-ink);border-radius:14px;padding:14px 5px;cursor:pointer}
+.couple-pin .couple-avatar{width:62px;height:62px}
+.couple-pin strong,.couple-pin span,.couple-pin b{display:block;max-width:100%;overflow-wrap:anywhere;font-size:12px}
+.couple-pin b{font-size:14px;color:var(--main)}
+.couple-pin span{color:var(--muted-ink)}
+.couple-empty-avatar{background:var(--sub);color:var(--ink)}
+@media(max-width:360px){.couple-avatar.large{width:76px;height:76px}.couple-main-layout{gap:12px}.couple-main-info>strong{font-size:20px}}
+
+/* v3.6 character pages */
+.couple-main-layout,.couple-pin,[data-open-couple]{cursor:pointer}
+.couple-detail-hero{display:flex;flex-direction:column;gap:15px}
+.couple-detail-photo{width:100%;height:220px;border-radius:15px;overflow:hidden;cursor:pointer;background:var(--input-bg)}
+.couple-detail-photo img,.couple-detail-photo .couple-placeholder{width:100%;height:100%;object-fit:cover;display:flex;align-items:center;justify-content:center;color:white;font-size:52px}
+.couple-detail-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.couple-detail-facts>div{background:var(--input-bg);border-radius:12px;padding:12px;min-width:0}
+.couple-detail-facts span,.couple-detail-facts strong{display:block;overflow-wrap:anywhere}
+.couple-detail-facts span{font-size:12px;color:var(--muted-ink);margin-bottom:6px}
+.couple-field-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line-color);padding:8px 0}
+.couple-field-row p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.couple-album{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.couple-album-item{min-width:0;border:0;background:var(--input-bg);border-radius:12px;padding:5px;color:var(--input-ink);text-align:left}
+.couple-album-item img,.couple-album-placeholder{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;background:var(--sub);display:flex;align-items:center;justify-content:center}
+.couple-album-item span{display:block;font-size:12px;padding:5px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* v3.5.5 character list order */
+.couple-order-row{padding:9px 0;border-bottom:1px solid var(--line-color);gap:8px}
+.couple-order-row strong{min-width:0;flex:1;overflow-wrap:anywhere}
+.couple-order-row button{min-width:42px}
+.couple-order-row button:disabled{opacity:.35;cursor:default}
+
+/* v3.5.7: touch drag sorting */
+.couple-sort-list{display:flex;flex-direction:column;gap:7px;min-width:0}
+.couple-sort-row{display:flex;align-items:center;gap:11px;padding:10px 9px;border-radius:12px;background:var(--input-bg);border:1px solid var(--line-color);min-width:0;position:relative;user-select:none;-webkit-user-select:none}
+.couple-sort-row .couple-avatar{width:40px;height:40px;font-size:16px}
+.couple-sort-row strong{flex:1;min-width:0;overflow-wrap:anywhere}
+.sort-number{min-width:18px;color:var(--muted-ink);font-size:13px;text-align:center}
+.sort-handle{width:46px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--sub);color:var(--ink);font-size:25px;touch-action:none;cursor:grab;flex-shrink:0}
+.couple-sort-row.is-dragging{opacity:.88;box-shadow:0 6px 18px #0005;border-color:var(--main)}
+.couple-sort-row.is-dragging .sort-handle{cursor:grabbing}
+
+.couple-detail-hero .row{flex-wrap:wrap;gap:7px}.couple-detail-hero .row>.row{justify-content:flex-start;flex-wrap:wrap}
+
+/* v3.5.11: compact 3x3 related favorites picker */
+.related-faves-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:100%}
+.related-fave{display:flex;align-items:center;flex-direction:column;justify-content:flex-start;gap:6px;padding:9px 4px;min-width:0;min-height:95px;border-radius:12px;border:1px solid var(--line-color);background:var(--input-bg);color:var(--input-ink);position:relative;cursor:pointer;font-size:12px}
+.related-fave[hidden]{display:none!important}
+.related-fave input[type="checkbox"]{position:absolute;top:5px;left:5px;width:17px;height:17px;accent-color:var(--main)}
+.related-fave img,.related-fave-initial{width:48px;height:48px;border-radius:12px;object-fit:cover;display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+.related-fave-name{font-size:12px;text-align:center;overflow-wrap:anywhere;max-width:100%;line-height:1.3}
+.related-fave:has(input:checked){outline:2px solid var(--main);outline-offset:-2px}
+.couple-detail-photo{height:auto!important;aspect-ratio:4/3;max-height:none}
+.couple-detail-photo.ratio-1-1{aspect-ratio:1/1}
+.couple-detail-photo.ratio-3-4{aspect-ratio:3/4}
+.couple-detail-photo.ratio-4-3{aspect-ratio:4/3}
+.couple-detail-photo img{object-fit:cover}
+.attendance-group{border:1px solid var(--line-color);border-radius:14px;overflow:hidden;margin:8px 0}
+.attendance-group-head{width:100%;display:flex;justify-content:space-between;align-items:center;border:0;background:var(--input-bg);color:var(--input-ink);padding:13px;text-align:left}
+.attendance-group .event{margin:0 8px;gap:7px}
+.attendance-handle{font-size:24px;min-width:30px;text-align:center;cursor:grab;touch-action:none;user-select:none;color:var(--main)}
+.is-dragging{outline:2px dashed var(--main);opacity:.8}
+.reminder-group summary{cursor:pointer;padding:5px 0}
+.reminder-group>.stack{margin-top:14px;max-height:340px;overflow:auto}
+.reminder-group label{display:block;padding:8px 2px;border-bottom:1px solid var(--line-color)}
+.birthday-fields{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:6px}.birthday-fields input{width:100%;min-width:0}.crop-overlay{position:fixed;inset:0;z-index:999999;background:#000c;display:flex;align-items:center;justify-content:center;padding:12px}.crop-card{background:#302d3c;color:#fff;width:min(100%,520px);max-height:94dvh;overflow:auto;padding:16px;border-radius:20px;display:flex;flex-direction:column;gap:12px}.crop-card h2{margin:0}.crop-stage{display:flex;justify-content:center;align-items:center;min-height:0}.crop-canvas{display:block;max-width:100%;max-height:46dvh;width:auto;height:auto;object-fit:contain;border:2px solid #b6a3df;touch-action:none;border-radius:6px}.crop-controls{display:grid;gap:12px}.crop-controls label{display:grid;gap:6px}.crop-controls select,.crop-controls input{width:100%;max-width:100%;box-sizing:border-box}.crop-card .row{display:flex;gap:6px}.crop-card .row button{flex:1;min-width:0;font-size:14px;padding:10px 4px}@media(max-width:360px){.birthday-fields{grid-template-columns:1fr 1fr}.birthday-fields input:first-child{grid-column:span 2}}</style><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="최애와 개인 일정을 함께 관리하는 나만의 캘린더"></head><body><main id="app"></main><nav class="tabs" id="tabs"></nav><dialog id="modal"></dialog><script>
+const KEY='myfaves-v1';const presets=[['딸기우유','#E889A7','#FFF1F5','#F7C9D8'],['라벤더','#9A87D5','#F5F0FF','#DDD3F7'],['민트','#6DB6A5','#EFFAF6','#C5E9DD'],['레몬','#D3A847','#FFF9E7','#F7E8A9'],['소다','#6E9FD4','#EEF6FF','#C9E1FA'],['다크','#8272B5','#24232E','#484256']];const today=new Date();const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const uid=()=>Math.random().toString(36).slice(2)+Date.now();let state;try{state=JSON.parse(localStorage.getItem(KEY))}catch{}state=state||{profiles:[],events:[],theme:['#6E9FD4','#EEF6FF','#C9E1FA'],display:'mixed',photoShape:'circle'};state.folders=Array.isArray(state.folders)?state.folders:[];state.personalColor=state.personalColor||'#6DB6A5';state.checkins=Array.isArray(state.checkins)?state.checkins:[];state.expenses=Array.isArray(state.expenses)?state.expenses:[];state.attendanceApps=Array.isArray(state.attendanceApps)?state.attendanceApps:[];state.attendanceCategories=Array.isArray(state.attendanceCategories)?state.attendanceCategories:['게임','채팅','기타'];state.attendanceLogs=state.attendanceLogs&&typeof state.attendanceLogs==='object'?state.attendanceLogs:{};state.fanBudget=state.fanBudget&&typeof state.fanBudget==='object'?state.fanBudget:{monthly:0};state.appearance=state.appearance&&typeof state.appearance==='object'?state.appearance:{mode:'light',textColor:'#283342',panelOpacity:86};state.reminders=state.reminders&&typeof state.reminders==='object'?state.reminders:{enabled:true,days7:true,days1:true,attendance:true,attendanceHour:20,attendanceTimes:['22:00','23:30','23:45'],mutedProfiles:[],mutedEvents:[],mutedApps:[]};state.couplePinned=Array.isArray(state.couplePinned)?state.couplePinned:[];state.coupleListOrder=Array.isArray(state.coupleListOrder)?state.coupleListOrder:[];state.coupleSlots=state.coupleSlots&&typeof state.coupleSlots==='object'?state.coupleSlots:{representative:state.coupleRepresentative||'',one:(state.couplePinned||[])[0]||'',two:(state.couplePinned||[])[1]||'',three:(state.couplePinned||[])[2]||''};const seenCoupleSlots=new Set();['representative','one','two','three'].forEach(k=>{const id=state.coupleSlots[k];if(!id||seenCoupleSlots.has(id)||!state.profiles.some(p=>p.id===id))state.coupleSlots[k]='';else seenCoupleSlots.add(id)});state.coupleRepresentative=state.coupleSlots.representative;state.couplePinned=['one','two','three'].map(k=>state.coupleSlots[k]).filter(Boolean);state.profiles.forEach(p=>{if(!('folderId' in p))p.folderId=''});let ui={tab:'calendar',month:new Date(today.getFullYear(),today.getMonth(),1),day:iso(today),filter:'all'};const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){alert('저장 공간이 부족해요. 사진 용량을 줄이거나 백업 후 정리해 주세요.');return false}};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const profile=id=>state.profiles.find(p=>p.id===id);const folder=id=>state.folders.find(f=>f.id===id);const scopeTheme=()=>{if(ui.filter==='personal')return state.personalTheme||[state.personalColor,'#EFFAF6','#C5E9DD'];let f=ui.filter.startsWith('folder:')||ui.filter.startsWith('work:')?folder(ui.filter.split(':')[1]):null;return f?.theme||(f?.parentId?folder(f.parentId)?.theme:null)||state.theme};const folderLabel=id=>{let f=folder(id);return f?(f.parentId?(folder(f.parentId)?.name+' / '):'')+f.name:'미분류'};const inScope=p=>ui.filter==='all'||(ui.filter.startsWith('folder:')&&(p?.folderId===ui.filter.slice(7)||folder(p?.folderId)?.parentId===ui.filter.slice(7)))||(ui.filter.startsWith('work:')&&p?.folderId===ui.filter.slice(5))||p?.id===ui.filter;function activePhoto(){if(ui.filter==='personal')return state.personalPhotoTheme||null;let f=ui.filter.startsWith('folder:')||ui.filter.startsWith('work:')?folder(ui.filter.split(':')[1]):null;return f?(f.photoTheme|| (f.parentId?folder(f.parentId)?.photoTheme:null)||null):state.photoTheme||null}
+function photoCSS(p){let tint=p.filter==='dark'?'0,0,0':'255,255,255';return `linear-gradient(rgba(${tint},${p.opacity/100}),rgba(${tint},${p.opacity/100})),url("${p.src}")`}
+function photoEditor(p,prefix){p=p||{src:'',area:'full',filter:'light',opacity:55};return `<div class="photo-settings" data-photo-editor="${prefix}"><strong>사진 배경 테마</strong><label class="field">아이폰 사진 선택<input type="file" accept="image/*" data-photo-file="${prefix}"></label>${p.src?`<div class="photo-preview" style="background-image:${photoCSS(p)}"></div><button type="button" class="btn danger small" data-photo-remove="${prefix}">사진 제거</button>`:'<div class="note">사진을 선택하면 미리보기가 나타나요.</div>'}<label class="field">사진 적용 범위<select data-photo-area="${prefix}">${[['full','전체 화면'],['calendar','캘린더 영역'],['header','상단 배너']].map(([v,n])=>`<option value="${v}" ${p.area===v?'selected':''}>${n}</option>`).join('')}</select></label><label class="field">필터<select data-photo-filter="${prefix}"><option value="light" ${p.filter==='light'?'selected':''}>라이트 (흰색)</option><option value="dark" ${p.filter==='dark'?'selected':''}>다크 (검은색)</option></select></label><label class="field">필터 불투명도 <span data-opacity-label>${p.opacity}%</span><input type="range" min="0" max="100" step="1" value="${p.opacity}" data-photo-opacity="${prefix}"></label><div class="note">0%는 원본 사진, 100%는 필터 색상이에요. 사진은 기기에 저장되며 JSON 백업에도 포함돼요.</div></div>`}
+function getPhoto(prefix){if(prefix==='global')return state.photoTheme||null;if(prefix==='personal')return state.personalPhotoTheme||null;return folder(prefix)?.photoTheme||null}
+function setPhoto(prefix,value){if(prefix==='global')state.photoTheme=value;else if(prefix==='personal')state.personalPhotoTheme=value;else{let f=folder(prefix);if(f)f.photoTheme=value}save();render()}
+function applyTheme(){let [main,bg,sub]=scopeTheme();let p=activePhoto(),root=document.getElementById('app');let a=state.appearance||{};let dark=a.mode==='dark'||(a.mode==='system'&&window.matchMedia?.('(prefers-color-scheme: dark)').matches);root.classList.remove('photo-full','photo-calendar','photo-header','photo-dark');if(p?.src){root.classList.add('photo-'+(p.area||'full'));if(p.filter==='dark')root.classList.add('photo-dark');root.style.setProperty('--photo-url',`url("${p.src}")`);root.style.setProperty('--photo-tint',`rgba(${p.filter==='dark'?'0,0,0':'255,255,255'},${Math.min(100,Math.max(0,p.opacity??55))/100})`)}let ink=a.textColor||(dark?'#F7F5FF':'#283342');if(dark&&ink.toLowerCase()==='#283342')ink='#F7F5FF';let opacity=Math.min(100,Math.max(0,Number(a.panelOpacity??86)))/100;document.documentElement.style.setProperty('--main',main);document.documentElement.style.setProperty('--bg',dark?'#171721':bg);document.documentElement.style.setProperty('--sub',dark?'#484256':sub);document.documentElement.style.setProperty('--ink',ink);document.documentElement.style.setProperty('--card',dark?'#302E3A':'#ffffff');document.documentElement.style.setProperty('--panel-opacity',opacity);document.documentElement.style.setProperty('--muted-ink',dark?'#D3CBDC':'#515C6C');document.documentElement.style.setProperty('--input-bg',dark?'#282633':'#ffffff');document.documentElement.style.setProperty('--input-ink',dark?'#F7F5FF':'#283342');document.documentElement.style.setProperty('--line-color',dark?'#625C70':'#E2E4EA');document.documentElement.classList.toggle('dark-ui',dark);document.querySelector('meta[name="theme-color"]').content=dark?'#171721':bg;
+ const cp=ui.tab==='profiles'&&ui.coupleDetail?profile(ui.coupleDetail):null;
+ const ct=cp?.characterTheme;
+ if(ct){
+  if(ct.main)document.documentElement.style.setProperty('--main',ct.main);
+  if(ct.bg&&!ct.photo)document.documentElement.style.setProperty('--bg',ct.bg);
+  if(ct.text)document.documentElement.style.setProperty('--ink',ct.text);
+  if(ct.opacity!==undefined)document.documentElement.style.setProperty('--panel-opacity',Math.max(0,Math.min(100,+ct.opacity))/100);
+  if(ct.photo){
+   root.classList.remove('photo-calendar','photo-header','photo-dark');
+   root.classList.add('photo-full');
+   if(ct.filter==='dark')root.classList.add('photo-dark');
+   root.style.setProperty('--photo-url',`url("${ct.photo}")`);
+   root.style.setProperty('--photo-tint',`rgba(${ct.filter==='dark'?'0,0,0':'255,255,255'},${Math.max(0,Math.min(100,+ct.tint||0))/100})`);
+  }else{
+   root.classList.remove('photo-full','photo-calendar','photo-header','photo-dark');
+  }
+ }
+}
+function occurrence(e,date){if(e.date===date)return true;if(!e.repeat||e.repeat==='none'||date<e.date)return false;let a=new Date(e.date+'T12:00:00'),b=new Date(date+'T12:00:00');if(e.repeat==='weekly')return Math.round((b-a)/86400000)%7===0;if(e.repeat==='monthly')return a.getDate()===b.getDate();if(e.repeat==='yearly')return a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();return false}function eventsOn(date){return state.events.filter(e=>occurrence(e,date)&&(ui.filter==='all'||(e.kind!=='personal'&&e.profileIds.some(id=>inScope(profile(id))))||(e.kind==='personal'&&ui.filter==='personal')))}function dateHTML(date,d){let ev=eventsOn(date), first=ev[0],p=first&&profile(first.profileIds[0]);let mode=first?.display==='default'||!first?.display?state.display:first.display;let shape=first?.shape==='default'||!first?.shape?state.photoShape:first.shape;let photo=first?.photo||p?.photo;let photoMode=mode==='photo'||(mode==='mixed'&&photo);let bg=photoMode&&shape==='background'&&photo;return `<button class="date ${ui.day===date?'selected':''} ${bg?'photo-bg':''}" data-day="${date}" ${bg?`style="background-image:url('${photo}')"`:''}><span class="num">${d}</span>${ev.length?`<span class="dots">${ev.slice(0,4).map(e=>`<i class="dot" style="background:${e.dotColor||((e.kind==='personal'?state.personalColor:profile(e.profileIds[0])?.color)||'#6E9FD4')}"></i>`).join('')}</span>`:''}${photoMode&&photo&&shape!=='background'?`<img class="avatar ${shape==='square'?'square':''}" src="${photo}" alt="">`:''}${((mode==='text')||(mode==='mixed'&&!photo))&&first?`<span class="tiny">${esc(first.name)}</span>`:''}${ev.length>2?`<span class="tiny">+${ev.length-2}</span>`:''}</button>`}
+function calendar(){let y=ui.month.getFullYear(),m=ui.month.getMonth(),start=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();let days=Array.from({length:Math.ceil((start+count)/7)*7},(_,i)=>{let d=i-start+1;return d<1||d>count?'<div></div>':dateHTML(iso(new Date(y,m,d)),d)}).join('');return `<div class="top calendar-header"><div><div class="brand">My Faves ♡</div><div class="heading">${y}년 ${m+1}월</div></div><div class="row"><button class="btn small secondary" data-move="-1">‹</button><button class="btn small secondary" data-move="1">›</button></div></div><div class="chips"><button class="chip ${ui.filter==='all'?'active':''}" data-filter="all">전체</button><button class="chip ${ui.filter==='personal'?'active':''}" data-filter="personal">개인 일정</button>${state.folders.filter(f=>!f.parentId).map(f=>`<button class="chip ${ui.filter==='folder:'+f.id?'active':''}" data-filter="folder:${f.id}">${esc(f.name)}</button>`).join('')}</div>${reminderList()?`<div class="panel stack"><strong>🔔 다가오는 일정 · 미출석 알림</strong>${reminderList()}</div>`:""}<div class="panel calendar-panel"><div class="week">${['일','월','화','수','목','금','토'].map(d=>`<div class="weekday">${d}</div>`).join('')}</div><div class="days">${days}</div></div><div class="panel"><div class="row"><strong>${ui.day.slice(5,7)}월 ${ui.day.slice(8)}일 일정</strong><button class="btn small" data-add="${ui.day}">+ 추가</button></div>${eventsOn(ui.day).length?eventsOn(ui.day).map(e=>`<div class="event" data-edit-event="${e.id}"><div class="stripe" style="background:${e.lineColor||((e.kind==='personal'?state.personalColor:profile(e.profileIds[0])?.color)||'var(--main)')}"></div><div class="event-text"><strong>${esc(e.name)}</strong><div class="muted">${e.kind==='personal'?'개인':esc(e.profileIds.map(id=>profile(id)?.name).filter(Boolean).join(', ')||'공통')} · ${esc(e.category)}${e.time?' · '+esc(e.time):''}</div></div><button type="button" class="event-delete" data-quick-delete="${e.id}" aria-label="${esc(e.name)} 삭제">삭제</button><span>›</span></div>`).join(''):'<div class="empty">등록된 일정이 없어요 ♡</div>'}</div>`}
+function openDay(date){const entries=eventsOn(date).slice().sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));const day=new Date(date+'T12:00:00');const title=`${day.getMonth()+1}월 ${day.getDate()}일 ${['일','월','화','수','목','금','토'][day.getDay()]}요일`;showModal(`<div class="day-modal stack"><div class="row"><div><div class="muted">MY FAVES · DAILY</div><h2>${title} ♡</h2></div><button class="btn small secondary" data-close>닫기</button></div><div class="muted">${entries.length}개의 일정 · 시간을 등록한 일정부터 표시</div>${entries.map(e=>{let p=profile(e.profileIds?.[0]);let photo=e.detailPhoto||e.photo||p?.photo;return `<div class="daily-event" data-daily-event="${esc(e.id)}"><div class="row"><strong>${esc(e.time||'종일')} · ${esc(e.name)}</strong><span>›</span></div><div class="muted">${esc(e.category||'일정')} · ${e.kind==='personal'?'개인':esc(e.profileIds.map(id=>profile(id)?.name).filter(Boolean).join(', ')||'공통')}</div>${photo?`<img class="daily-cover" src="${photo}" alt="">`:''}${e.memo?`<div style="margin-top:7px;overflow-wrap:anywhere">${esc(e.memo)}</div>`:''}</div>`}).join('')||'<div class="empty">이날 등록된 일정이 없어요 ♡</div>'}<button class="btn" data-day-add="${date}">+ 이 날짜에 일정 추가</button></div>`)}
+let lastDayTap={date:'',time:0};
+document.addEventListener('click',e=>{let t=e.target.closest('[data-day-add],[data-daily-event]');if(!t)return;if(t.dataset.dayAdd){const d=t.dataset.dayAdd;closeModal();editEvent(null,d)}else if(t.dataset.dailyEvent){const id=t.dataset.dailyEvent;closeModal();eventDetail(id)}});
+
+
+function coupleDays(date){
+ if(!date)return 'D-DAY 미설정';
+ const now=new Date(),start=new Date(date+'T12:00:00'),t=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);
+ const days=Math.round((t-start)/86400000)+1;
+ return days>=1?'D+'+days:'D-'+(1-days);
+}
+function coupleAvatar(p,large=false){
+ return p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}" class="couple-avatar ${large?'large':''}">`:`<div class="couple-avatar ${large?'large':''} couple-placeholder" style="background:${esc(p.color||'#9A87D5')}">${esc((p.name||'?').slice(0,1))}</div>`;
+}
+function coupleProfileCard(p){
+ const pinned=(state.couplePinned||[]).includes(p.id);
+ return `<div class="profile" style="gap:8px;min-width:0">${coupleAvatar(p)}<div style="flex:1;min-width:0" data-open-couple="${esc(p.id)}"><strong>${esc(p.name)}</strong><div class="muted">${esc(folderLabel(p.folderId))} · ${coupleDays(p.coupleDate)}</div></div><button type="button" class="btn small secondary" data-edit-profile="${esc(p.id)}">수정</button><button type="button" class="btn small ${pinned?'':'secondary'}" data-pin-couple="${esc(p.id)}">${(state.coupleSlots?.representative===p.id)?'★ 대표':(['one','two','three'].findIndex(k=>state.coupleSlots?.[k]===p.id)>=0?'★ '+(1+['one','two','three'].findIndex(k=>state.coupleSlots?.[k]===p.id))+'번':'☆ 고정')}</button></div>`;
+}
+function orderedCoupleProfiles(){
+ const order=state.coupleListOrder||[];
+ return [...state.profiles].sort((a,b)=>{
+  const ai=order.indexOf(a.id),bi=order.indexOf(b.id);
+  return (ai<0?order.length+state.profiles.indexOf(a):ai)-(bi<0?order.length+state.profiles.indexOf(b):bi);
+ });
+}
+function editCoupleListOrder(){
+ const all=orderedCoupleProfiles();
+ const active=ui.coupleGenre||'all';
+ const visible=all.filter(p=>active==='all'||(active==='uncategorized'?!p.folderId:p.folderId===active||folder(p.folderId)?.parentId===active));
+ showModal(`<h2>☰ 목록 순서 조정</h2><div class="stack"><div class="note">오른쪽 ≡ 손잡이를 누른 채 위아래로 끌어 순서를 바꿔요. 변경한 순서는 자동 저장돼요. 대표와 상단 고정 3명은 그대로 유지돼요.</div>
+ <div id="couple-sort-list" class="couple-sort-list">${visible.map((p,i)=>`<div class="couple-sort-row" data-sort-id="${esc(p.id)}"><span class="sort-number">${i+1}</span>${coupleAvatar(p)}<strong>${esc(p.name)}</strong><span class="sort-handle" role="button" aria-label="${esc(p.name)} 순서 드래그" tabindex="0">☰</span></div>`).join('')||'<div class="empty">정렬할 캐릭터가 없어요.</div>'}</div>
+ <button type="button" class="btn" data-close>완료</button></div>`);
+ const list=document.getElementById('couple-sort-list'),dialog=document.getElementById('modal');
+ let dragging=null,handle=null,startY=0,activePointer=null;
+ const renumber=()=>list.querySelectorAll('.sort-number').forEach((el,i)=>el.textContent=i+1);
+ const persist=()=>{
+  const reordered=[...list.querySelectorAll('[data-sort-id]')].map(el=>el.dataset.sortId);
+  const ids=orderedCoupleProfiles().map(p=>p.id);
+  const slots=ids.map((id,i)=>reordered.includes(id)?i:-1).filter(i=>i>=0);
+  slots.forEach((idx,i)=>{ids[idx]=reordered[i]});
+  state.coupleListOrder=ids;
+  if(save()!==false)render();
+ };
+ list.addEventListener('pointerdown',e=>{
+  const h=e.target.closest('.sort-handle');if(!h)return;
+  dragging=h.closest('.couple-sort-row');handle=h;activePointer=e.pointerId;startY=e.clientY;
+  dragging.classList.add('is-dragging');
+  try{h.setPointerCapture(e.pointerId)}catch(_){}
+  e.preventDefault();
+ });
+ list.addEventListener('pointermove',e=>{
+  if(!dragging||e.pointerId!==activePointer)return;
+  const y=e.clientY;
+  dragging.style.transform=`translateY(${y-startY}px)`;
+  dragging.style.zIndex='2';
+  const rows=[...list.querySelectorAll('.couple-sort-row')].filter(r=>r!==dragging);
+  for(const row of rows){
+   const r=row.getBoundingClientRect(),mid=(r.top+r.bottom)/2;
+   if(y>=r.top&&y<=r.bottom){
+    if(y<mid)list.insertBefore(dragging,row);
+    else list.insertBefore(dragging,row.nextSibling);
+    startY=y;dragging.style.transform='translateY(0px)';
+    break;
+   }
+  }
+  const rect=dialog.getBoundingClientRect();
+  if(y>rect.bottom-85)dialog.scrollTop+=12;
+  else if(y<rect.top+85)dialog.scrollTop-=12;
+  renumber();
+  e.preventDefault();
+ });
+ const finish=e=>{
+  if(!dragging||e.pointerId!==activePointer)return;
+  dragging.style.transform='';dragging.style.zIndex='';dragging.classList.remove('is-dragging');
+  dragging=null;handle=null;activePointer=null;persist();
+ };
+ list.addEventListener('pointerup',finish);
+ list.addEventListener('pointercancel',finish);
+ // Keyboard alternative: focus a handle, then use arrow keys to move.
+ list.addEventListener('keydown',e=>{
+  if(!e.target.classList.contains('sort-handle')||!['ArrowUp','ArrowDown'].includes(e.key))return;
+  e.preventDefault();const row=e.target.closest('.couple-sort-row');
+  const other=e.key==='ArrowUp'?row.previousElementSibling:row.nextElementSibling;
+  if(!other||!other.classList.contains('couple-sort-row'))return;
+  if(e.key==='ArrowUp')list.insertBefore(row,other);else list.insertBefore(other,row);
+  renumber();persist();
+ });
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-order-couple]'))editCoupleListOrder()});
+function coupleRoom(){
+ const slots=state.coupleSlots||{};
+ const pins=['one','two','three'].map(k=>profile(slots[k])||null);
+ const main=profile(slots.representative)||null;
+ const genreFolders=state.folders.filter(f=>!f.parentId);
+ const active=ui.coupleGenre||'all';
+ const shown=orderedCoupleProfiles().filter(p=>active==='all'||(active==='uncategorized'?!p.folderId:p.folderId===active||folder(p.folderId)?.parentId===active));
+ return `<div class="top"><h2>💗 커플룸</h2><button class="btn small secondary" data-choose-representative>대표 설정</button></div>
+ <div class="panel couple-main-card">
+ ${main?`<div class="couple-main-layout" data-open-couple="${esc(main.id)}">${coupleAvatar(main,true)}<div class="couple-main-info"><strong>${esc(main.name)}</strong><div class="muted">${esc(folderLabel(main.folderId))}</div><div class="couple-dday">${coupleDays(main.coupleDate)}</div></div></div>`:`<div class="empty">대표 캐릭터를 설정해 주세요 ♡<br>아래에서 프로필을 등록한 뒤 대표로 지정할 수 있어요.</div>`}
+ </div>
+ <div class="panel stack"><div class="row"><strong>📌 상단 고정 (${pins.filter(Boolean).length}/3)</strong><span class="muted">1 · 2 · 3 순서</span></div>
+ <div class="couple-pins">${[0,1,2].map(i=>{let v=pins[i];return `<div class="couple-pin" ${v?`data-open-couple="${esc(v.id)}"`:''}>${v?`${coupleAvatar(v)}<strong>${esc(v.name)}</strong><span>${esc(folderLabel(v.folderId))}</span><b>${coupleDays(v.coupleDate)}</b>`:`<div class="couple-avatar couple-empty-avatar">＋</div><span>고정 ${i+1}</span>`}</div>`}).join('')}</div>
+ <div class="note">대표 1명과 상단 고정 1·2·3번은 각각 다른 캐릭터예요. 각 캐릭터의 상세 페이지에서 위치를 지정해 주세요.</div></div>
+ <div class="panel stack"><div class="row"><strong>📁 기존 커플룸</strong><button class="btn small secondary" data-add-folder>+ 장르 폴더</button></div>
+ <div class="chips"><button class="chip ${active==='all'?'active':''}" data-couple-genre="all">전체</button>${genreFolders.map(f=>`<button class="chip ${active===f.id?'active':''}" data-couple-genre="${esc(f.id)}">${esc(f.name)}</button>`).join('')}<button class="chip ${active==='uncategorized'?'active':''}" data-couple-genre="uncategorized">미분류</button></div>
+ <div class="row"><strong>♡ 최애 프로필 (${shown.length})</strong><div class="row"><button class="btn small secondary" data-order-couple>☰ 순서 조정</button><button class="btn small" data-add-profile>+ 등록</button></div></div>
+ ${shown.length?shown.map(coupleProfileCard).join(''):'<div class="empty">이 장르에 등록된 최애가 없어요.</div>'}
+ </div>`;
+}
+
+function coupleDetailPage(){
+ const p=profile(ui.coupleDetail);if(!p){ui.coupleDetail='';return coupleRoom()}
+ const fields=Array.isArray(p.coupleFields)?p.coupleFields:[];
+ const logs=Array.isArray(p.coupleLogs)?p.coupleLogs:[];
+ const birthday=p.birthday?`${p.birthday.startsWith('0000-')?'':p.birthday.slice(0,4)+'년 '}${Number(p.birthday.slice(5,7))}월 ${Number(p.birthday.slice(8,10))}일`:'미설정';const ageLabel=p.age!==undefined&&p.age!==null&&p.age!==''?`${esc(p.age)}세`:'미설정';
+ return `<div class="top"><h2>♡ ${esc(p.name)}</h2><button class="btn small secondary" data-back-couple>← 커플룸</button></div>
+ <div class="panel couple-detail-hero"><div class="couple-detail-photo ratio-${esc(p.photoRatio||'4:3').replace(':','-')}" data-open-couple-photo="${esc(p.id)}">${p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`:`<div class="couple-placeholder" style="background:${esc(p.color||'#9A87D5')}">${esc(p.name.slice(0,1))}</div>`}</div><div class="row" style="align-items:center;justify-content:space-between"><div><h2 style="margin:0">${esc(p.name)}</h2><div class="muted">${esc(folderLabel(p.folderId))}</div></div><div class="row"><button class="btn small secondary" data-character-photo-ratio="${esc(p.id)}">▣ 사진 비율</button><button class="btn small secondary" data-character-theme="${esc(p.id)}">🎨 테마</button><button class="btn small secondary" data-edit-profile="${esc(p.id)}">편집</button><button class="btn small" data-couple-position="${esc(p.id)}">📌 고정 위치</button></div></div><div class="couple-detail-facts"><div><span>생일</span><strong>${esc(birthday)}</strong></div><div><span>나이</span><strong>${ageLabel}</strong></div><div><span>D-DAY</span><strong>${coupleDays(p.coupleDate)}</strong></div></div></div>
+ <div class="panel stack"><div class="row"><strong>✎ 캐릭터 소개</strong><button class="btn small" data-add-couple-field="${esc(p.id)}">+ 항목 추가</button></div>${fields.length?fields.map((f,i)=>`<div class="couple-field-row"><div><span class="muted">${esc(f.title)}</span><p>${esc(f.value)}</p></div><button class="btn small secondary" data-edit-couple-field="${i}">수정</button></div>`).join(''):'<div class="muted">성격, 좋아하는 것, 특징 등 원하는 항목을 자유롭게 추가해 보세요.</div>'}</div>
+ <div class="panel stack"><div class="row"><strong>📷 기록 목록</strong><button class="btn small" data-add-couple-log="${esc(p.id)}">+ 기록 추가</button></div><div class="couple-album">${logs.length?logs.slice().reverse().map((v,i)=>`<button class="couple-album-item" data-open-couple-log="${logs.length-1-i}">${v.photo?`<img src="${esc(v.photo)}" alt="${esc(v.title)}">`:'<div class="couple-album-placeholder">♡</div>'}<span>${esc(v.title||v.date||'기록')}</span></button>`).join(''):'<div class="muted">아직 기록이 없어요. 사진과 날짜별 이야기를 추가해 보세요.</div>'}</div></div>`;
+}
+
+function editCharacterPhotoRatio(id){
+ const p=profile(id);if(!p)return;
+ showModal(`<h2>▣ 캐릭터 사진 비율</h2><div class="stack"><div class="note">캐릭터 상세 페이지 상단 사진의 가로세로 비율을 선택해 주세요. 원본 사진은 변경되지 않으며 화면에서 보이는 영역만 달라져요.</div>
+ ${[['1:1','정사각형 (1:1)'],['3:4','세로형 (3:4)'],['4:3','가로형 (4:3)']].map(([v,n])=>`<button type="button" class="btn ${(p.photoRatio||'4:3')===v?'':'secondary'}" data-set-character-ratio="${esc(id)}" data-ratio="${v}">${n}${(p.photoRatio||'4:3')===v?' ✓':''}</button>`).join('')}
+ <button type="button" class="btn secondary" data-close>취소</button></div>`);
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-character-photo-ratio]');if(b){editCharacterPhotoRatio(b.dataset.characterPhotoRatio);return}
+ const c=e.target.closest('[data-set-character-ratio]');if(c){
+  const p=profile(c.dataset.setCharacterRatio);if(!p)return;
+  p.photoRatio=c.dataset.ratio;if(!save())return;closeModal();render();
+ }
+});
+function editCharacterTheme(id){
+ const p=profile(id);if(!p)return;
+ const t=p.characterTheme||{main:p.color||'#9A87D5',bg:'#F5F0FF',text:'#283342',opacity:86,photo:'',filter:'dark',tint:45};
+ showModal(`<h2>🎨 ${esc(p.name)} 전용 테마</h2><form id="character-theme-form" class="stack">
+ <div class="note">이 캐릭터 상세 페이지에서만 적용돼요. 다른 캐릭터와 전체 캘린더 테마는 바뀌지 않아요.</div>
+ <label class="field">포인트 색상<input type="color" name="main" value="${esc(t.main)}"></label>
+ <label class="field">배경 색상<input type="color" name="bg" value="${esc(t.bg)}"></label>
+ <label class="field">글자 색상<input type="color" name="text" value="${esc(t.text)}"></label>
+ <label class="field">카드 불투명도 <span id="character-opacity-label">${Number(t.opacity)}%</span><input type="range" name="opacity" min="0" max="100" value="${Number(t.opacity)}" oninput="document.getElementById('character-opacity-label').textContent=this.value+'%'"></label>
+ <label class="field">배경 사진 (선택)<input type="file" name="photo" accept="image/*"></label>
+ ${t.photo?`<img src="${esc(t.photo)}" style="max-height:160px;object-fit:contain;width:100%"><label><input type="checkbox" name="removePhoto"> 배경 사진 제거</label>`:''}
+ <label class="field">사진 필터<select name="filter"><option value="dark" ${t.filter==='dark'?'selected':''}>어둡게</option><option value="light" ${t.filter==='light'?'selected':''}>밝게</option></select></label>
+ <label class="field">사진 필터 강도 <span id="character-tint-label">${Number(t.tint)}%</span><input type="range" name="tint" min="0" max="100" value="${Number(t.tint)}" oninput="document.getElementById('character-tint-label').textContent=this.value+'%'"></label>
+ <div class="row"><button type="button" class="btn secondary" data-close>취소</button><button type="button" class="btn danger" id="reset-character-theme">초기화</button><button class="btn" type="submit">저장</button></div>
+ </form>`);
+ const form=document.getElementById('character-theme-form');
+ form.onsubmit=async e=>{
+  e.preventDefault();const fd=new FormData(form);
+  let next={main:fd.get('main'),bg:fd.get('bg'),text:fd.get('text'),opacity:Number(fd.get('opacity')),photo:fd.get('removePhoto')?'':t.photo,filter:fd.get('filter'),tint:Number(fd.get('tint'))};
+  if(form.photo.files[0])next.photo=await shrinkLarge(form.photo.files[0]);
+  p.characterTheme=next;if(!save())return;closeModal();render();
+ };
+ document.getElementById('reset-character-theme').onclick=()=>{p.characterTheme=null;if(!save())return;closeModal();render()};
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-character-theme]');if(b)editCharacterTheme(b.dataset.characterTheme)});
+function editCoupleField(i){const p=profile(ui.coupleDetail);if(!p)return;const arr=p.coupleFields||[],f=arr[i]||{title:'',value:''};showModal(`<h2>소개 항목 ${i==null?'추가':'수정'}</h2><form id="couple-field-form" class="stack"><label class="field">항목 이름<input name="title" required maxlength="40" value="${esc(f.title)}" placeholder="예: 성격, 좋아하는 것"></label><label class="field">내용<textarea name="value" rows="4" maxlength="1000">${esc(f.value)}</textarea></label><div class="row"><button type="button" class="btn secondary" data-close>취소</button>${i!=null?'<button type="button" class="btn danger" id="remove-couple-field">삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);document.getElementById('couple-field-form').onsubmit=e=>{e.preventDefault();const fd=new FormData(e.currentTarget);const next={title:String(fd.get('title')).trim(),value:String(fd.get('value')).trim()};if(i==null)arr.push(next);else arr[i]=next;p.coupleFields=arr;save();closeModal();render()};const b=document.getElementById('remove-couple-field');if(b)b.onclick=async()=>{if(!await askConfirm('이 소개 항목을 삭제할까요?'))return;const before=[...arr];arr.splice(i,1);p.coupleFields=arr;if(!save()){p.coupleFields=before;return}closeModal();render()}}
+function editCoupleLog(i){const p=profile(ui.coupleDetail);if(!p)return;const arr=p.coupleLogs||[],v=arr[i]||{date:iso(new Date()),title:'',memo:'',photo:''};showModal(`<h2>${i==null?'새 기록 추가':'기록 수정'}</h2><form id="couple-log-form" class="stack"><label class="field">날짜<input type="date" name="date" required value="${esc(v.date)}"></label><label class="field">제목 (선택)<input name="title" maxlength="70" placeholder="비워두어도 저장돼요" value="${esc(v.title)}"></label><label class="field">사진<input type="file" name="photo" accept="image/*"></label>${v.photo?`<img src="${esc(v.photo)}" style="width:100%;max-height:200px;object-fit:contain;border-radius:12px"><label><input type="checkbox" name="removePhoto"> 사진 삭제</label>`:''}<label class="field">오늘의 기록<textarea name="memo" rows="5">${esc(v.memo)}</textarea></label><div class="row"><button type="button" class="btn secondary" data-close>취소</button>${i!=null?'<button type="button" class="btn danger" id="remove-couple-log">삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);const form=document.getElementById('couple-log-form');form.onsubmit=async e=>{e.preventDefault();const fd=new FormData(form),next={...v,date:fd.get('date'),title:String(fd.get('title')).trim(),memo:String(fd.get('memo')).trim()};if(fd.get('removePhoto'))next.photo='';if(form.photo.files[0])next.photo=await shrink(form.photo.files[0]);if(i==null)arr.push(next);else arr[i]=next;p.coupleLogs=arr;if(!save())return;closeModal();render()};const b=document.getElementById('remove-couple-log');if(b)b.onclick=async()=>{if(!await askConfirm('이 기록을 삭제할까요?'))return;const before=[...arr];arr.splice(i,1);p.coupleLogs=arr;if(!save()){p.coupleLogs=before;return}closeModal();render()}}
+function openCoupleLog(i){const p=profile(ui.coupleDetail),v=p?.coupleLogs?.[i];if(!v)return;showModal(`<h2>${esc(v.title||v.date||"기록")}</h2><div class="stack"><div class="muted">${esc(v.date)}</div>${v.photo?`<img src="${esc(v.photo)}" style="width:100%;max-height:65vh;object-fit:contain;border-radius:12px">`:''}<p style="white-space:pre-wrap">${esc(v.memo)}</p><div class="row"><button class="btn secondary" data-close>닫기</button><button type="button" class="btn danger" id="delete-open-couple-log">삭제</button><button class="btn" id="edit-open-couple-log">수정</button></div></div>`);document.getElementById('edit-open-couple-log').onclick=()=>editCoupleLog(i);document.getElementById('delete-open-couple-log').onclick=async()=>{if(!await askConfirm('이 기록을 삭제할까요?'))return;const before=[...(p.coupleLogs||[])];p.coupleLogs=before.filter((_,index)=>index!==i);if(!save()){p.coupleLogs=before;return}closeModal();render()}}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-open-couple],[data-back-couple],[data-add-couple-field],[data-edit-couple-field],[data-add-couple-log],[data-open-couple-log],[data-open-couple-photo]');if(!t)return;if(t.dataset.openCouple){ui.coupleDetail=t.dataset.openCouple;render()}else if(t.hasAttribute('data-back-couple')){ui.coupleDetail='';render()}else if(t.hasAttribute('data-add-couple-field'))editCoupleField(null);else if(t.dataset.editCoupleField!==undefined)editCoupleField(+t.dataset.editCoupleField);else if(t.hasAttribute('data-add-couple-log'))editCoupleLog(null);else if(t.dataset.openCoupleLog!==undefined)openCoupleLog(+t.dataset.openCoupleLog);else if(t.dataset.openCouplePhoto){const p=profile(t.dataset.openCouplePhoto);if(p?.photo)showModal(`<div class="stack"><img src="${esc(p.photo)}" style="width:100%;max-height:75vh;object-fit:contain"><button class="btn secondary" data-close>닫기</button></div>`)}});
+
+function chooseCouplePosition(id){
+ const p=profile(id);if(!p)return;
+ const slots=state.coupleSlots||{};
+ const positions=[['representative','대표'],['one','1번'],['two','2번'],['three','3번']];
+ const current=positions.find(([k])=>slots[k]===id)?.[0]||'';
+ showModal(`<h2>📌 ${esc(p.name)} 표시 위치</h2><div class="stack"><div class="note">대표와 1·2·3번은 서로 다른 캐릭터로 총 4명까지 표시돼요. 이미 다른 캐릭터가 있는 위치를 선택하면 두 캐릭터의 자리를 교환해요.</div>
+ ${positions.map(([k,label])=>`<button type="button" class="btn ${current===k?'':'secondary'}" data-set-couple-position="${k}" data-couple-id="${esc(id)}">${current===k?'✓ ':''}${label}${slots[k]&&slots[k]!==id?' · '+esc(profile(slots[k])?.name||''):''}</button>`).join('')}
+ <button type="button" class="btn secondary" data-set-couple-position="none" data-couple-id="${esc(id)}">고정 해제</button><button class="btn secondary" data-close>취소</button></div>`);
+}
+function setCouplePosition(id,target){
+ const keys=['representative','one','two','three'];
+ if(!profile(id))return;
+ const slots=state.coupleSlots||{representative:'',one:'',two:'',three:''};
+ const old=keys.find(k=>slots[k]===id);
+ if(target==='none'){if(old)slots[old]=''}
+ else if(keys.includes(target)){
+  if(old!==target){const displaced=slots[target]||'';slots[target]=id;if(old)slots[old]=displaced;}
+ }
+ state.coupleSlots=slots;
+ state.coupleRepresentative=slots.representative||'';
+ state.couplePinned=['one','two','three'].map(k=>slots[k]).filter(Boolean);
+ if(!save())return;closeModal();render();
+}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-couple-position],[data-set-couple-position],[data-choose-representative]');if(!t)return;
+ if(t.dataset.couplePosition){chooseCouplePosition(t.dataset.couplePosition);return}
+ if(t.dataset.setCouplePosition){setCouplePosition(t.dataset.coupleId,t.dataset.setCouplePosition);return}
+ if(t.hasAttribute('data-choose-representative')){
+  showModal(`<h2>대표 캐릭터 선택</h2><div class="stack">${state.profiles.map(p=>`<button class="btn secondary" data-set-couple-position="representative" data-couple-id="${esc(p.id)}">${esc(p.name)}</button>`).join('')||'<div class="empty">캐릭터를 먼저 등록해 주세요.</div>'}<button class="btn secondary" data-close>취소</button></div>`);
+ }
+});
+function editCoupleRoom(){
+ const c=state.coupleRoom||{name:'우리의 기념일',date:'',memo:''};
+ showModal(`<h2>💗 커플룸 설정</h2><form id="couple-form" class="stack">
+ <label class="field">커플룸 이름<input name="name" maxlength="60" value="${esc(c.name)}" placeholder="우리의 기념일"></label>
+ <label class="field">기념일 시작 날짜<input type="date" name="date" value="${esc(c.date)}"></label>
+ <label class="field">짧은 메모<input name="memo" maxlength="120" value="${esc(c.memo||'')}"></label>
+ <div class="note">시작일을 1일로 계산하며, 다음 연도 기념일까지 남은 날짜도 표시해요.</div>
+ <div class="row"><button type="button" class="btn secondary" data-close>취소</button><button class="btn" type="submit">저장</button></div></form>`);
+ document.getElementById('couple-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget);state.coupleRoom={name:String(f.get('name')||'우리의 기념일').trim(),date:f.get('date'),memo:String(f.get('memo')||'').trim()};save();closeModal();render()};
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-edit-couple]'))editCoupleRoom()});
+document.addEventListener('click',e=>{let g=e.target.closest('[data-couple-genre]');if(g){ui.coupleGenre=g.dataset.coupleGenre;render();return}let b=e.target.closest('[data-pin-couple]');if(b)chooseCouplePosition(b.dataset.pinCouple)});
+function profiles(){return `<div class="top"><h2>나의 최애 ♡</h2><button class="btn small" data-add-profile>+ 최애 등록</button></div><div class="panel">${state.profiles.length?state.profiles.map(p=>`<div class="profile" data-edit-profile="${p.id}">${p.photo?`<img src="${p.photo}" alt="">`:`<div class="placeholder" style="background:${p.color}">${esc(p.name.slice(0,1))}</div>`}<div style="flex:1"><strong>${esc(p.name)}</strong><div class="muted">${esc(folderLabel(p.folderId))} ${p.birthday?'· 생일 '+esc(p.birthday.slice(5)):''}</div></div><span style="color:${p.color}">●</span><span>›</span></div>`).join(''):'<div class="empty">첫 번째 최애를 등록해 보세요!</div>'}</div>`}
+function foldersPage(){return `<div class="top"><h2>장르 · 작품 폴더</h2><button class="btn small" data-add-folder>+ 폴더</button></div><div class="panel stack"><button class="chip" data-filter="all" data-goto-calendar>📅 전체 캘린더</button><button class="chip" data-filter="personal" data-goto-calendar>🗓 개인 일정</button>${state.folders.filter(f=>!f.parentId).map(f=>`<div class="panel stack" style="margin:0"><div class="row"><button class="chip" data-filter="folder:${f.id}" data-goto-calendar>📁 ${esc(f.name)}</button><button class="btn small secondary" data-edit-folder="${f.id}">편집</button><button class="btn small danger" data-remove-folder="${f.id}">삭제</button></div>${state.folders.filter(w=>w.parentId===f.id).map(w=>`<div class="row" style="padding-left:15px"><button class="chip" data-filter="work:${w.id}" data-goto-calendar>📂 ${esc(w.name)}</button><button class="btn small secondary" data-edit-folder="${w.id}">편집</button><button class="btn small danger" data-remove-folder="${w.id}">삭제</button></div>`).join('')}</div>`).join('')}${state.folders.length?'':'<div class="empty">장르 폴더를 먼저 만들어 보세요.</div>'}</div>`}function editFolder(id){let f=folder(id)||{id:uid(),name:'',parentId:'',color:'#6E9FD4',theme:null};showModal(`<h2>${id?'폴더 수정':'새 폴더'}</h2><form id="folder-form" class="stack"><label class="field">폴더 이름<input name="name" required maxlength="50" value="${esc(f.name)}"></label><label class="field">폴더 위치<select name="parentId"><option value="">장르 폴더 (상위)</option>${state.folders.filter(x=>!x.parentId&&x.id!==id).map(x=>`<option value="${x.id}" ${f.parentId===x.id?'selected':''}>${esc(x.name)} 안의 작품·그룹</option>`).join('')}</select></label><label class="field">일정 구분 색상<input type="color" name="color" value="${f.color}"></label><label class="field"><input type="checkbox" name="customTheme" ${f.theme?'checked':''}> 이 폴더만의 테마 사용 (끄면 상위 폴더 테마 적용)</label>${['포인트','배경','보조'].map((label,i)=>`<label class="field">${label} 색상<input type="color" name="theme${i}" value="${(f.theme||state.theme)[i]}"></label>`).join('')}${photoEditor(f.photoTheme,id||"new-folder")}<div class="row"><button type="button" class="btn secondary" data-close>취소</button>${id?'<button type="button" class="btn danger" data-delete-folder>삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);let form=document.getElementById('folder-form');form.addEventListener('submit',e=>{e.preventDefault();let fd=new FormData(form),next={...f,name:fd.get('name').trim(),parentId:fd.get('parentId'),color:fd.get('color'),theme:fd.get('customTheme')? [0,1,2].map(i=>fd.get('theme'+i)):null,photoTheme:f.photoTheme||null};if(form.dataset.pendingPhoto){next.photoTheme={...(next.photoTheme||{}),...JSON.parse(form.dataset.pendingPhoto)}}if(!next.name)return;if(id)state.folders=state.folders.map(x=>x.id===id?next:x);else state.folders.push(next);save();closeModal();render()});form.querySelector('[data-delete-folder]')?.addEventListener('click',()=>confirmFolderDeletion(id))}
+function confirmFolderDeletion(id){
+ const target=folder(id);if(!target)return;
+ const children=state.folders.filter(f=>f.parentId===id);
+ const ids=[id,...children.map(f=>f.id)];
+ const affected=state.profiles.filter(p=>ids.includes(p.folderId)).length;
+ showModal(`<h2>폴더 삭제 확인</h2><div class="stack"><strong>‘${esc(target.name)}’ 폴더를 삭제할까요?</strong><div class="note">${children.length?`하위 폴더 ${children.length}개도 함께 삭제돼요. `:''}연결된 최애 ${affected}명의 폴더 지정은 해제돼요. 최애와 일정 자체는 삭제되지 않아요.</div><div class="row"><button type="button" class="btn secondary" id="cancel-folder-delete">취소</button><button type="button" class="btn danger" id="confirm-folder-delete">폴더 삭제하기</button></div></div>`);
+ document.getElementById('cancel-folder-delete').onclick=()=>{closeModal();render()};
+ document.getElementById('confirm-folder-delete').onclick=()=>{
+  state.folders=state.folders.filter(f=>!ids.includes(f.id));
+  state.profiles.forEach(p=>{if(ids.includes(p.folderId))p.folderId=''});
+  ui.filter='all';ui.coupleGenre='all';
+  save();closeModal();render();
+ };
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-remove-folder]');if(b)confirmFolderDeletion(b.dataset.removeFolder)});
+function settings(){return `<h2>꾸미기 & 설정</h2>${reminderSettings()}<div class="panel stack"><strong>기본 테마</strong><div class="grid2">${presets.map(p=>`<button class="chip" data-preset="${p[0]}" style="background:${p[2]};color:${p[1]};border:1px solid ${p[1]}">● ${p[0]}</button>`).join('')}</div><strong>직접 색상 선택</strong>${['포인트','배경','보조'].map((name,i)=>`<label class="field">${name}<input type="color" data-theme="${i}" value="${state.theme[i]}"></label>`).join('')}${photoEditor(state.photoTheme,"global")}</div><div class="panel stack"><strong>개인 일정 테마</strong><label class="field">개인 일정 구분 색상<input type="color" data-personal-color value="${state.personalColor}"></label>${['포인트','배경','보조'].map((label,i)=>`<label class="field">개인 ${label}<input type="color" data-personal-theme="${i}" value="${(state.personalTheme||['#6DB6A5','#EFFAF6','#C5E9DD'])[i]}"></label>`).join('')}${photoEditor(state.personalPhotoTheme,"personal")}</div><div class="panel stack"><strong>달력 기본 표시 방식</strong><select id="display">${[['mixed','혼합형'],['dot','색상 점'],['text','일정 제목'],['photo','최애 사진']].map(([v,n])=>`<option value="${v}" ${state.display===v?'selected':''}>${n}</option>`).join('')}</select><strong>사진 표시 형태</strong><select id="shape">${[['circle','동그란 사진'],['square','네모난 사진'],['background','날짜 칸 배경']].map(([v,n])=>`<option value="${v}" ${state.photoShape===v?'selected':''}>${n}</option>`).join('')}</select></div><div class="panel stack"><strong>화면 · 글자 · 카드 꾸미기</strong><label class="field">화면 모드<select data-appearance="mode"><option value="light" ${state.appearance.mode==='light'?'selected':''}>라이트 모드</option><option value="dark" ${state.appearance.mode==='dark'?'selected':''}>다크 모드</option><option value="system" ${state.appearance.mode==='system'?'selected':''}>기기 설정 따르기</option></select></label><label class="field">글자 색상<input type="color" data-appearance="textColor" value="${state.appearance.textColor||'#283342'}"></label><button class="btn small secondary" data-reset-text>글자 색상 기본값</button><label class="field">카드 배경 불투명도 <span id="panel-opacity-value">${state.appearance.panelOpacity??86}%</span><input type="range" min="0" max="100" step="1" data-appearance="panelOpacity" value="${state.appearance.panelOpacity??86}"></label><div class="note">0%는 카드 배경이 투명하고 100%는 불투명해요. 사진 위에서도 글자가 잘 보이도록 필요에 따라 조절해 주세요.</div></div><div class="panel stack"><strong>데이터 백업</strong><button class="btn secondary" id="export">백업 파일 내보내기 (JSON)</button><label class="field">백업 파일 복원<input type="file" id="import" accept="application/json,.json"></label><div class="note">사진은 앱 내부에 저장돼요. Safari 데이터를 삭제하거나 앱 주소가 바뀌면 기록이 사라질 수 있으니 정기적으로 백업해 주세요. 큰 사진은 저장 공간을 많이 차지할 수 있어요.</div></div>`}
+
+const money=n=>Number(n||0).toLocaleString('ko-KR')+'원';
+const expCategory=e=>e.category||'기타';
+const periodKey=(d,mode)=>{let x=new Date(d+'T12:00:00');if(mode==='all')return '전체';if(mode==='year')return String(x.getFullYear());if(mode==='month')return d.slice(0,7);let day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return iso(x)};
+const samePeriod=(d,mode)=>mode==='all'||periodKey(d,mode)===periodKey(iso(new Date()),mode);
+const categoryNames=()=>['연예인','게임','애니','채팅','기타',...(state.customExpenseCategories||[])].filter((v,i,a)=>a.indexOf(v)===i);
+function attendanceGroupedHTML(){
+ const cats=[...new Set([...(state.attendanceCategories||[]),...state.attendanceApps.map(a=>a.kind||'기타')])];
+ const order=state.attendanceOrder||[];
+ const collapsed=state.attendanceCollapsed||[];
+ return `<div class="note">분류별로 접고 펼칠 수 있어요. 앱 오른쪽 ≡ 손잡이를 길게 눌러 위아래로 드래그하면 같은 분류 안에서 순서를 바꿀 수 있어요.</div>`+
+ cats.map(cat=>{
+ const apps=state.attendanceApps.filter(a=>(a.kind||'기타')===cat).sort((a,b)=>{
+  const ai=order.indexOf(a.id),bi=order.indexOf(b.id);return (ai<0?99999:ai)-(bi<0?99999:bi);
+ });
+ if(!apps.length)return '';
+ const folded=collapsed.includes(cat);
+ return `<div class="attendance-group"><button type="button" class="attendance-group-head" data-attendance-collapse="${esc(cat)}" aria-expanded="${!folded}"><strong>📁 ${esc(cat)} (${apps.length})</strong><span>${folded?'▸':'▾'}</span></button>
+ ${folded?'':apps.map(a=>{
+  const logs=state.attendanceLogs[a.id]||[],done=logs.includes(iso(new Date()));
+  return `<div class="event attendance-sort-item" data-sort-app="${esc(a.id)}" data-sort-category="${esc(cat)}"><button class="btn small ${done?'secondary':''}" data-attendance-toggle="${esc(a.id)}">${done?'✓ 완료':'출석'}</button><div class="event-text"><strong>${esc(a.name)}</strong><div class="muted">누적 ${logs.length}일</div></div><button class="btn small secondary" data-edit-attendance="${esc(a.id)}">수정</button><span class="attendance-handle" data-attendance-handle="${esc(a.id)}" aria-label="순서 이동" role="button" tabindex="0">≡</span></div>`;
+ }).join('')}</div>`;
+ }).join('')+(state.attendanceApps.length?'':'<div class="empty">출석할 게임이나 채팅 앱을 등록해 주세요.</div>');
+}
+document.addEventListener('click',ev=>{
+ const b=ev.target.closest('[data-attendance-collapse]');if(!b)return;
+ const c=b.dataset.attendanceCollapse;state.attendanceCollapsed=state.attendanceCollapsed||[];
+ state.attendanceCollapsed=state.attendanceCollapsed.includes(c)?state.attendanceCollapsed.filter(x=>x!==c):[...state.attendanceCollapsed,c];
+ save();render();
+});
+(function(){
+ let dragging=null;
+ document.addEventListener('pointerdown',e=>{
+  const h=e.target.closest('[data-attendance-handle]');if(!h)return;
+  const item=h.closest('.attendance-sort-item');if(!item)return;
+  dragging={id:item.dataset.sortApp,cat:item.dataset.sortCategory,startY:e.clientY,moved:false,pointerId:e.pointerId};
+  h.setPointerCapture?.(e.pointerId);
+  item.classList.add('is-dragging');
+ });
+ document.addEventListener('pointermove',e=>{
+  if(!dragging||e.pointerId!==dragging.pointerId)return;
+  if(Math.abs(e.clientY-dragging.startY)>6)dragging.moved=true;
+  if(!dragging.moved)return;
+  const items=[...document.querySelectorAll('.attendance-sort-item')].filter(x=>x.dataset.sortCategory===dragging.cat);
+  const target=items.find(x=>x.dataset.sortApp!==dragging.id&&e.clientY>=x.getBoundingClientRect().top&&e.clientY<=x.getBoundingClientRect().bottom);
+  if(target){const item=items.find(x=>x.dataset.sortApp===dragging.id);if(item){target.parentNode.insertBefore(item,target.getBoundingClientRect().top+target.offsetHeight/2<e.clientY?target.nextSibling:target)}}
+ });
+ const finish=e=>{
+  if(!dragging||e.pointerId!==dragging.pointerId)return;
+  const cat=dragging.cat;
+  const ids=[...document.querySelectorAll('.attendance-sort-item')].filter(x=>x.dataset.sortCategory===cat).map(x=>x.dataset.sortApp);
+  if(dragging.moved&&ids.length){state.attendanceOrder=[...(state.attendanceOrder||[]).filter(id=>!ids.includes(id)),...ids];save();render()}
+  else document.querySelectorAll('.is-dragging').forEach(x=>x.classList.remove('is-dragging'));
+  dragging=null;
+ };
+ document.addEventListener('pointerup',finish);document.addEventListener('pointercancel',finish);
+})();
+function trackerPage(){
+ const todayKey=iso(new Date()),mode=ui.expPeriod||'month',filter=ui.expFilter||'all';
+ const all=state.expenses.filter(e=>samePeriod(e.date,mode));
+ const rows=all.filter(e=>filter==='all'||expCategory(e)===filter);
+ const total=rows.reduce((a,e)=>a+Number(e.amount||0),0);
+ const grouped={};all.forEach(e=>{let k=expCategory(e);grouped[k]=(grouped[k]||0)+Number(e.amount||0)});
+ const grand=all.reduce((a,e)=>a+Number(e.amount||0),0);
+ const spentMonth=state.expenses.filter(e=>e.date?.startsWith(todayKey.slice(0,7))).reduce((a,e)=>a+Number(e.amount||0),0);
+ const budget=Number(state.fanBudget.monthly)||0,remaining=budget-spentMonth;
+ const doneCount=state.attendanceApps.filter(a=>(state.attendanceLogs[a.id]||[]).includes(todayKey)).length;
+ const periodLabel={week:'이번 주',month:'이번 달',year:'올해',all:'전체'};
+ return `<div class="top"><h2>출석 · 덕질 가계부</h2></div>
+ <div class="panel stack"><div class="row"><strong>📱 다른 앱 출석 체크</strong><button class="btn small" data-add-attendance>+ 앱 등록</button></div><div class="row"><span class="muted">분류를 직접 추가·수정·삭제할 수 있어요</span><button class="btn small secondary" data-manage-attendance-categories>분류 관리</button></div>
+ <div class="muted">오늘 ${doneCount}/${state.attendanceApps.length}개 출석 완료 · ${todayKey}</div>
+ ${attendanceGroupedHTML()}
+ <div class="note">여기서 체크해도 해당 게임·채팅 앱에 자동 출석되지는 않아요. 출석 여부를 기록하는 체크리스트예요.</div></div>
+ <div class="panel stack"><div class="row"><strong>💗 덕질 예산</strong><button class="btn small secondary" data-edit-budget>예산 설정</button></div>
+ <div class="muted">이번 달 사용 가능 예산</div><div style="font-size:24px;font-weight:800">${money(budget)}</div>
+ <div class="row"><span>이번 달 지출</span><b>${money(spentMonth)}</b></div><div class="row"><span>${remaining>=0?'남은 예산':'초과 금액'}</span><b style="color:${remaining<0?'#b8435c':'var(--main)'}">${money(Math.abs(remaining))}</b></div>
+ <div style="height:12px;background:#edf0f5;border-radius:10px;overflow:hidden"><div style="height:100%;width:${budget?Math.min(100,spentMonth/budget*100):0}%;background:${remaining<0?'#d75c78':'var(--main)'};border-radius:10px"></div></div>
+ <div class="note">월 예산을 설정하면 이번 달 현질 기록을 자동으로 차감해요. 예산은 실제 잔고가 아니라 지출 한도예요.</div></div>
+ <div class="panel stack"><div class="row"><strong>💸 현질 가계부</strong><button class="btn small" data-add-expense>+ 지출 기록</button></div>
+ <div class="chips">${[['week','주'],['month','월'],['year','연'],['all','전체']].map(([v,l])=>`<button class="chip ${mode===v?'active':''}" data-exp-period="${v}">${l}</button>`).join('')}</div>
+ <label class="field">카테고리<select data-exp-filter><option value="all" ${filter==='all'?'selected':''}>전체 통합</option>${categoryNames().map(c=>`<option value="${esc(c)}" ${filter===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+ <div class="muted">${periodLabel[mode]} · ${filter==='all'?'모든 장르':esc(filter)}</div><div style="font-size:29px;font-weight:800">${money(total)}</div>
+ ${filter==='all'?`<strong>장르별 지출 차트</strong>${Object.entries(grouped).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><div class="row" style="font-size:13px"><span>${esc(k)}</span><b>${money(v)}</b></div><div style="height:13px;background:#edf0f5;border-radius:10px;overflow:hidden"><div style="height:100%;width:${grand?Math.max(1,v/grand*100):0}%;background:var(--main);border-radius:10px"></div></div></div>`).join('')||'<div class="empty">아직 기록된 지출이 없어요.</div>'}`:''}
+ <strong>지출 내역 (${rows.length}건)</strong>${rows.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>`<div class="event"><div class="event-text"><strong>${esc(e.title||'지출')}</strong><div class="muted">${esc(e.date)} · ${esc(expCategory(e))}${e.memo?' · '+esc(e.memo):''}</div></div><b>${money(e.amount)}</b><button class="btn small secondary" data-edit-expense="${esc(e.id)}">수정</button></div>`).join('')||'<div class="empty">선택한 기간의 지출이 없어요.</div>'}</div>
+ <div class="note">출석 기록·예산·지출은 이 기기에 저장되며 JSON 백업에 포함돼요.</div>`;
+}
+function editAttendance(id){
+ const a=state.attendanceApps.find(x=>x.id===id)||{id:uid(),name:'',kind:'게임'};
+ showModal(`<h2>${id?'앱 수정':'출석 앱 등록'}</h2><form id="attendance-form" class="stack"><label class="field">앱 이름<input name="name" required maxlength="50" value="${esc(a.name)}" placeholder="예: 게임 또는 채팅 앱"></label><label class="field">종류<select name="kind">${[...new Set([...state.attendanceCategories,a.kind])].map(k=>`<option value="${esc(k)}" ${a.kind===k?'selected':''}>${esc(k)}</option>`).join('')}</select></label><div class="row"><button type="button" class="btn secondary" data-close>취소</button>${id?'<button type="button" class="btn danger" id="delete-attendance">삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);
+ document.getElementById('attendance-form').onsubmit=ev=>{ev.preventDefault();let fd=new FormData(ev.currentTarget),next={id:a.id,name:String(fd.get('name')).trim(),kind:fd.get('kind')};if(!next.name)return;if(id)state.attendanceApps=state.attendanceApps.map(x=>x.id===id?next:x);else state.attendanceApps.push(next);save();closeModal();render()};
+ document.getElementById('delete-attendance')?.addEventListener('click',async()=>{if(await askConfirm('앱과 해당 앱의 출석 기록을 모두 삭제할까요?')){state.attendanceApps=state.attendanceApps.filter(x=>x.id!==id);delete state.attendanceLogs[id];save();closeModal();render()}});
+}
+function manageAttendanceCategories(){
+ const categories=state.attendanceCategories;
+ showModal(`<h2>출석 앱 분류 관리</h2><div class="stack">
+ <div class="note">원하는 분류를 추가할 수 있어요. 삭제한 분류의 앱은 기타로 이동하고 출석 기록은 유지돼요.</div>
+ <form id="add-category-form" class="row"><input name="name" required maxlength="30" placeholder="예: 팬카페, 웹사이트, SNS" style="flex:1;min-width:0;padding:12px;border-radius:10px;border:1px solid var(--line-color);background:var(--input-bg);color:var(--input-ink)"><button class="btn" type="submit">+ 추가</button></form>
+ ${categories.map((c,i)=>`<div class="row"><strong>${esc(c)}</strong><div class="row"><button class="btn small secondary" data-rename-att-category="${i}">수정</button><button class="btn small danger" data-remove-att-category="${i}">삭제</button></div></div>`).join('')}
+ <button class="btn secondary" data-close>닫기</button></div>`);
+ document.getElementById('add-category-form').onsubmit=e=>{e.preventDefault();let name=new FormData(e.currentTarget).get('name').trim();if(!name||categories.includes(name))return alert('이미 있는 분류이거나 올바르지 않은 이름이에요.');categories.push(name);save();manageAttendanceCategories()};
+ document.querySelectorAll('[data-rename-att-category]').forEach(b=>b.onclick=()=>{let i=+b.dataset.renameAttCategory,old=categories[i];showModal(`<h2>분류 이름 수정</h2><form id="rename-category-form" class="stack"><label class="field">이름<input name="name" required maxlength="30" value="${esc(old)}"></label><div class="row"><button type="button" class="btn secondary" id="back-categories">뒤로</button><button class="btn" type="submit">저장</button></div></form>`);document.getElementById('back-categories').onclick=manageAttendanceCategories;document.getElementById('rename-category-form').onsubmit=e=>{e.preventDefault();let name=new FormData(e.currentTarget).get('name').trim();if(!name||categories.some((x,j)=>j!==i&&x===name))return alert('이름을 확인해 주세요.');categories[i]=name;state.attendanceApps.forEach(a=>{if(a.kind===old)a.kind=name});save();manageAttendanceCategories()}});
+ document.querySelectorAll('[data-remove-att-category]').forEach(b=>b.onclick=async()=>{let i=+b.dataset.removeAttCategory,old=categories[i];if(!await askConfirm(`‘${old}’ 분류를 삭제할까요?`))return;categories.splice(i,1);if(!categories.includes('기타'))categories.push('기타');state.attendanceApps.forEach(a=>{if(a.kind===old)a.kind='기타'});save();manageAttendanceCategories()});
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-manage-attendance-categories]'))manageAttendanceCategories()});
+function editBudget(){showModal(`<h2>덕질 예산 설정</h2><form id="budget-form" class="stack"><label class="field">매월 덕질에 쓸 수 있는 금액 (원)<input name="monthly" type="number" inputmode="numeric" min="0" step="1" required value="${Number(state.fanBudget.monthly)||0}"></label><div class="note">월별로 동일한 한도를 적용해요. 남은 금액은 다음 달로 이월되지 않아요.</div><div class="row"><button type="button" class="btn secondary" data-close>취소</button><button type="submit" class="btn">저장</button></div></form>`);document.getElementById('budget-form').onsubmit=ev=>{ev.preventDefault();let n=Number(new FormData(ev.currentTarget).get('monthly'));if(!Number.isSafeInteger(n)||n<0)return alert('예산 금액을 확인해 주세요.');state.fanBudget.monthly=n;save();closeModal();render()}}
+document.addEventListener('click',ev=>{let t=ev.target.closest('[data-add-attendance],[data-edit-attendance],[data-attendance-toggle],[data-edit-budget]');if(!t)return;if(t.hasAttribute('data-add-attendance'))editAttendance(null);else if(t.hasAttribute('data-edit-attendance'))editAttendance(t.dataset.editAttendance);else if(t.hasAttribute('data-edit-budget'))editBudget();else if(t.hasAttribute('data-attendance-toggle')){let id=t.dataset.attendanceToggle,d=iso(new Date()),logs=state.attendanceLogs[id]||[];state.attendanceLogs[id]=logs.includes(d)?logs.filter(x=>x!==d):[...logs,d];save();render()}});
+function editExpense(id){
+ let e=state.expenses.find(x=>x.id===id)||{id:uid(),date:iso(new Date()),category:'게임',title:'',amount:'',memo:''};
+ showModal(`<h2>${id?'지출 수정':'지출 추가'}</h2><form id="expense-form" class="stack">
+ <label class="field">날짜<input name="date" type="date" required value="${esc(e.date)}"></label>
+ <label class="field">장르<select name="category">${categoryNames().concat(categoryNames().includes(e.category)?[]:[e.category]).map(c=>`<option ${c===e.category?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+ <label class="field">직접 입력하여 장르 추가<input name="customCategory" maxlength="30" placeholder="새 장르 이름 (선택)"></label><div class="note">새 장르를 입력하고 저장하면 다음 지출부터 선택 목록에 계속 표시돼요.</div>
+ <label class="field">지출 내용<input name="title" required maxlength="80" placeholder="예: 굿즈, 게임 패스, 앨범" value="${esc(e.title)}"></label>
+ <label class="field">금액 (원)<input name="amount" type="number" inputmode="numeric" min="1" step="1" required value="${esc(e.amount)}"></label>
+ <label class="field">메모<input name="memo" maxlength="160" value="${esc(e.memo)}"></label>
+ <div class="row"><button type="button" class="btn secondary" data-close>취소</button>${id?'<button type="button" class="btn danger" id="delete-expense">삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);
+ document.getElementById('expense-form').onsubmit=ev=>{ev.preventDefault();let fd=new FormData(ev.currentTarget);let next={id:e.id,date:fd.get('date'),category:String(fd.get('customCategory')||'').trim()||fd.get('category'),title:fd.get('title').trim(),amount:Number(fd.get('amount')),memo:fd.get('memo').trim()};if(!next.title||!Number.isSafeInteger(next.amount)||next.amount<=0)return alert('금액과 내용을 확인해 주세요.');if(String(fd.get('customCategory')||'').trim()){state.customExpenseCategories=state.customExpenseCategories||[];if(!categoryNames().includes(next.category))state.customExpenseCategories.push(next.category)}if(id)state.expenses=state.expenses.map(x=>x.id===id?next:x);else state.expenses.push(next);save();closeModal();render()};
+ document.getElementById('delete-expense')?.addEventListener('click',async()=>{if(await askConfirm('이 지출 기록을 삭제할까요?')){state.expenses=state.expenses.filter(x=>x.id!==id);save();closeModal();render()}});
+}
+document.addEventListener('click',ev=>{let t=ev.target.closest('[data-checkin],[data-add-expense],[data-edit-expense],[data-exp-period]');if(!t)return;if(t.hasAttribute('data-add-expense'))editExpense(null);else if(t.hasAttribute('data-edit-expense'))editExpense(t.dataset.editExpense);else if(t.hasAttribute('data-exp-period')){ui.expPeriod=t.dataset.expPeriod;render()}});
+document.addEventListener('change',ev=>{if(ev.target.hasAttribute('data-exp-filter')){ui.expFilter=ev.target.value;render()}});
+
+function reminderSettings(){
+ const r=state.reminders||{},check=(k)=>r[k]!==false?'checked':'';
+ return `<div class="panel stack"><div class="row"><strong>🔔 알림 관리</strong><button class="btn small secondary" data-open-reminders>설정 열기</button></div>
+ <div class="muted">일정·생일 7일 전/1일 전, 미출석 앱을 관리해요. 현재는 앱을 열었을 때 알림 목록으로 확인할 수 있어요. 앱이 닫혀 있을 때의 푸시 알림은 아직 지원하지 않아요.</div></div>`;
+}
+function remindersPage(){
+ const r=state.reminders||{},on=(k)=>r[k]!==false?'checked':'';
+ return `<div class="top"><h2>🔔 알림 설정</h2><button class="btn small secondary" data-reminder-back>뒤로</button></div>
+ <div class="panel stack"><label><input type="checkbox" data-reminder-switch="enabled" ${on('enabled')}> 알림 목록 사용</label>
+ <label><input type="checkbox" data-reminder-switch="days7" ${on('days7')}> 일정·생일 7일 전</label>
+ <label><input type="checkbox" data-reminder-switch="days1" ${on('days1')}> 일정·생일 1일 전</label>
+ <label><input type="checkbox" data-reminder-switch="attendance" ${on('attendance')}> 출석하지 않은 앱 알림</label>
+ <strong>미출석 확인 시각 (3회)</strong>
+ ${(Array.isArray(r.attendanceTimes)?r.attendanceTimes:['22:00','23:30','23:45']).map((time,i)=>`<label class="field">${i+1}차 확인<input type="time" data-attendance-time="${i}" value="${esc(time)}"></label>`).join('')}
+ <div class="muted">기본값: 22:00 · 23:30 · 23:45. 각 시간을 자유롭게 변경할 수 있어요.</div>
+ <div class="note">지정한 시각 이후 앱을 열었을 때만 표시합니다. 세 차례 푸시 발송은 아직 지원하지 않습니다. 외부 게임·채팅 앱의 실제 출석 상태를 읽을 수 없으므로 My Faves에서 체크한 내역을 기준으로 해요.</div></div>
+ <details class="panel reminder-group"><summary><strong>📁 인물·캐릭터별 알림 켜기</strong></summary><div class="stack">${state.profiles.map(x=>`<label><input type="checkbox" data-mute-profile="${esc(x.id)}" ${!(r.mutedProfiles||[]).includes(x.id)?'checked':''}> ${esc(x.name)} 알림 받기</label>`).join('')||'<div class="muted">등록된 최애가 없어요.</div>'}</div></details>
+ <details class="panel reminder-group"><summary><strong>📁 일정별 알림 켜기</strong></summary><div class="stack">${state.events.map(x=>`<label><input type="checkbox" data-mute-event="${esc(x.id)}" ${!(r.mutedEvents||[]).includes(x.id)?'checked':''}> ${esc(x.name)} (${esc(x.date)}) 알림 받기</label>`).join('')||'<div class="muted">등록된 일정이 없어요.</div>'}</div></details>
+ <details class="panel reminder-group"><summary><strong>📁 출석 앱별 알림 켜기</strong></summary><div class="stack">${state.attendanceApps.map(x=>`<label><input type="checkbox" data-mute-app="${esc(x.id)}" ${!(r.mutedApps||[]).includes(x.id)?'checked':''}> ${esc(x.name)} 알림 받기</label>`).join('')||'<div class="muted">등록된 출석 앱이 없어요.</div></details>'}</div></details>
+ <div class="panel stack"><strong>현재 알림 미리보기</strong>${reminderList()||'<div class="empty">지금 확인할 알림이 없어요 ♡</div>'}</div>`;
+}
+function reminderList(){
+ const r=state.reminders||{};if(r.enabled===false)return '';
+ const now=new Date(), today=iso(now),day=(offset)=>{let d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+offset);return iso(d)};
+ let out=[];
+ const eventMuted=e=>(r.mutedEvents||[]).includes(e.id)||(e.profileIds||[]).some(id=>(r.mutedProfiles||[]).includes(id));
+ for(const n of [1,7]){
+  if(r['days'+n]===false)continue;
+  const date=day(n);
+  for(const e of state.events){
+   if(!eventMuted(e)&&occurrence(e,date))out.push(`📅 ${esc(e.name)} · ${n}일 전`);
+  }
+  for(const p of state.profiles){
+   if(!p.birthday||(r.mutedProfiles||[]).includes(p.id))continue;
+   if(p.birthday.slice(5)===date.slice(5))out.push(`🎂 ${esc(p.name)} 생일 · ${n}일 전`);
+  }
+ }
+ const times=Array.isArray(r.attendanceTimes)?r.attendanceTimes:['22:00','23:30','23:45'];const current=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');const reached=times.filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t)&&t<=current);
+ if(r.attendance!==false&&reached.length){
+  for(const app of state.attendanceApps){
+   if((r.mutedApps||[]).includes(app.id))continue;
+   const logs=state.attendanceLogs?.[app.id];
+   const done=Array.isArray(logs)?logs.includes(today):!!(logs&&logs[today]);
+   if(!done)out.push(`☑️ ${esc(app.name)} · 오늘 출석 미완료 (${reached[reached.length-1]} 확인)`);
+  }
+ }
+ return out.map(x=>`<div class="event"><span>${x}</span></div>`).join('');
+}
+document.addEventListener('click',e=>{
+ let t=e.target.closest('[data-open-reminders],[data-reminder-back]');
+ if(!t)return;
+ ui.reminderPage=t.hasAttribute('data-open-reminders');ui.tab='settings';render();
+});
+document.addEventListener('change',e=>{
+ let t=e.target,r=state.reminders;
+ if(t.dataset.reminderSwitch){r[t.dataset.reminderSwitch]=t.checked;save();render()}
+ if(t.dataset.attendanceTime!==undefined){const i=Number(t.dataset.attendanceTime);if(i>=0&&i<3&&/^([01]\d|2[0-3]):[0-5]\d$/.test(t.value)){r.attendanceTimes=Array.isArray(r.attendanceTimes)?r.attendanceTimes:['22:00','23:30','23:45'];r.attendanceTimes[i]=t.value;save();render()}}
+ for(const [key,field] of [['muteProfile','mutedProfiles'],['muteEvent','mutedEvents'],['muteApp','mutedApps']]){
+  if(t.dataset[key]===undefined)continue;
+  let id=t.dataset[key];r[field]=Array.isArray(r[field])?r[field]:[];
+  r[field]=t.checked?r[field].filter(x=>x!==id):[...new Set([...r[field],id])];
+  save();render();
+ }
+});
+function render(){applyTheme();document.getElementById('app').innerHTML=ui.tab==='calendar'?calendar():ui.tab==='profiles'?(ui.coupleDetail?coupleDetailPage():coupleRoom()):ui.tab==='folders'?foldersPage():ui.tab==='tracker'?trackerPage():ui.reminderPage?remindersPage():settings();document.getElementById('tabs').innerHTML=[['calendar','▦','캘린더'],['folders','▤','폴더'],['profiles','♡','커플룸'],['tracker','₩','출석·현질'],['settings','⚙','설정']].map(([id,ic,name])=>`<button class="tab ${ui.tab===id?'active':''}" data-tab="${id}"><b>${ic}</b>${name}</button>`).join('')}
+function showModal(html){let d=document.getElementById('modal');d.innerHTML=html;if(!d.open)d.showModal()}function closeModal(){let d=document.getElementById('modal');if(d.open)d.close()}function askConfirm(message){return new Promise(resolve=>{showModal(`<div class="stack"><h2>변경 확인</h2><p>${esc(message)}</p><div class="row"><button type="button" class="btn secondary" id="dialog-confirm-no">취소</button><button type="button" class="btn danger" id="dialog-confirm-yes">확인</button></div></div>`);const no=document.getElementById('dialog-confirm-no'),yes=document.getElementById('dialog-confirm-yes');no.onclick=()=>{closeModal();resolve(false)};yes.onclick=()=>{closeModal();resolve(true)}})}const colors=['#E889A7','#D987AC','#F19C8B','#D3A847','#79B78E','#6DB6A5','#6E9FD4','#9A87D5','#B38ABF','#696969','#2B2B38','#F0C8D8'];function palette(value){return `<div class="swatches">${colors.map(c=>`<button type="button" class="swatch ${value===c?'chosen':''}" data-color="${c}" style="background:${c}"></button>`).join('')}</div>`}
+function birthFromForm(fd){
+ const m=Number(fd.get('birthMonth')),d=Number(fd.get('birthDay'));
+ if(!m&&!d)return '';
+ if(!m||!d||m<1||m>12||d<1||d>31)throw Error('생일은 월과 일을 모두 입력해 주세요.');
+ const y=Number(fd.get('birthYear'))||0;
+ if(y<0||y>9999)throw Error('출생연도를 확인해 주세요.');
+ const check=new Date(Date.UTC(y||2000,m-1,d));
+ if(check.getUTCMonth()!==m-1||check.getUTCDate()!==d)throw Error('존재하지 않는 날짜예요.');
+ return String(y).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+function editProfile(id){let p=profile(id)||{id:uid(),name:'',category:'',color:'#E889A7',birthday:'',photo:''};showModal(`<h2>${id?'최애 수정':'최애 등록'}</h2><form id="profile-form" class="stack"><label class="field">이름 *<input name="name" required maxlength="50" value="${esc(p.name)}"></label><label class="field">소속 폴더<select name="folderId"><option value="">미분류</option>${state.folders.map(f=>`<option value="${esc(f.id)}" ${p.folderId===f.id?'selected':''}>${esc(folderLabel(f.id))}</option>`).join('')}</select></label><label class="field">생일 (선택 · 출생연도 없이 등록 가능)<div class="birthday-fields"><input type="number" name="birthYear" min="1" max="9999" inputmode="numeric" placeholder="출생연도 (선택)" value="${p.birthday&&!p.birthday.startsWith('0000-')?esc(p.birthday.slice(0,4)):''}"><input type="number" name="birthMonth" min="1" max="12" inputmode="numeric" placeholder="월" value="${p.birthday?Number(p.birthday.slice(5,7)):''}"><input type="number" name="birthDay" min="1" max="31" inputmode="numeric" placeholder="일" value="${p.birthday?Number(p.birthday.slice(8,10)):''}"></div></label><label class="field">나이 (선택 · 생년월일과 별도 입력)<input type="number" name="age" min="0" max="9999" inputmode="numeric" placeholder="나이를 직접 입력" value="${p.age===undefined||p.age===null?'':esc(p.age)}"></label><label class="field">커플룸 D-DAY 시작일 (선택)<input type="date" name="coupleDate" value="${esc(p.coupleDate||'')}"></label><label class="field">프로필 사진<input type="file" name="photo" accept="image/*"></label><label class="field">캐릭터 페이지 사진 비율<select name="photoRatio">${[['1:1','1:1 · 정사각형'],['3:4','3:4 · 세로형'],['4:3','4:3 · 가로형']].map(([v,n])=>`<option value="${v}" ${(p.photoRatio||'4:3')===v?'selected':''}>${n}</option>`).join('')}</select></label><label class="field">대표 색상<input type="color" name="color" value="${p.color}"></label>${palette(p.color)}<div class="row"><button type="button" class="btn secondary" data-close>취소</button>${id?'<button type="button" class="btn danger" data-delete-profile>삭제</button>':''}<button class="btn" type="submit">저장</button></div></form>`);let form=document.getElementById('profile-form');form.addEventListener('submit',async ev=>{ev.preventDefault();let fd=new FormData(form);let birthday;try{birthday=birthFromForm(fd)}catch(err){alert(err.message);return}let next={...p,name:fd.get('name').trim(),folderId:fd.get('folderId'),category:folderLabel(fd.get('folderId')),birthday:birthday,age:fd.get('age')===''?'':Number(fd.get('age')),coupleDate:fd.get('coupleDate'),photoRatio:fd.get('photoRatio'),color:fd.get('color'),theme:fd.get('customTheme')? [0,1,2].map(i=>fd.get('theme'+i)):null};if(form.photo.files[0])next.photo=await shrink(form.photo.files[0]);if(id)state.profiles=state.profiles.map(q=>q.id===id?next:q);else state.profiles.push(next);save();closeModal();render()});form.querySelector('[data-delete-profile]')?.addEventListener('click',async()=>{if(await askConfirm('최애를 삭제할까요? 연결된 일정도 삭제됩니다.')){state.profiles=state.profiles.filter(q=>q.id!==id);state.couplePinned=(state.couplePinned||[]).filter(x=>x!==id);if(state.coupleRepresentative===id)state.coupleRepresentative='';if(state.coupleSlots)Object.keys(state.coupleSlots).forEach(k=>{if(state.coupleSlots[k]===id)state.coupleSlots[k]=''});state.events=state.events.filter(e=>!e.profileIds.includes(id));ui.filter='all';save();closeModal();render()}})}
+function safeLink(value){try{const u=new URL((value||'').trim());return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function eventDetail(id){const e=state.events.find(x=>x.id===id);if(!e)return;const url=safeLink(e.link);const pic=e.detailPhoto||e.photo||profile(e.profileIds?.[0])?.photo||'';showModal(`<div class="stack"><h2>${esc(e.name)}</h2>${pic?`<img class="detail-photo" src="${esc(pic)}" alt="일정 사진">`:''}<div class="note">${esc(e.date)} ${esc(e.time||'')} · ${esc(e.category||'기타')}</div>${e.memo?`<div class="detail-memo">${esc(e.memo).replace(/\n/g,'<br>')}</div>`:''}${url?`<a class="btn detail-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">🔗 사이트 바로가기 ↗</a>`:''}<div class="row"><button class="btn secondary" type="button" data-close>닫기</button><button class="btn secondary" type="button" data-detail-edit="${esc(id)}">수정</button><button class="btn danger" type="button" data-detail-delete="${esc(id)}">삭제</button></div></div>`);document.querySelector('[data-detail-edit]').onclick=()=>{closeModal();editEvent(id)};document.querySelector('[data-detail-delete]').onclick=()=>deleteEventById(id)}
+function editEvent(id,date){let e=state.events.find(e=>e.id===id)||{id:uid(),name:'',date:date||ui.day,time:'',category:'기념일',profileIds:[],kind:'fave',repeat:'none',display:'default',shape:'default',memo:'',photo:'',detailPhoto:'',link:''};showModal(`<h2>${id?'일정 수정':'새 일정 등록'}</h2><form id="event-form" class="stack"><label class="field">일정 이름 *<input name="name" required maxlength="100" value="${esc(e.name)}"></label><label class="field">일정 구분<select name="kind"><option value="fave" ${e.kind!=='personal'?'selected':''}>덕질 일정</option><option value="personal" ${e.kind==='personal'?'selected':''}>개인 일정</option></select></label><label class="field">관련 최애 (개인 일정은 선택하지 않아도 돼요)</label>${state.profiles.length?`<div class="related-faves-grid" id="related-faves-grid">${state.profiles.map((p,i)=>`<label class="related-fave ${i>=9?'related-extra':''}" ${i>=9?'hidden':''}><input type="checkbox" name="profile" value="${esc(p.id)}" ${e.profileIds.includes(p.id)?'checked':''}><span>${p.photo?`<img src="${esc(p.photo)}" alt="">`:`<span class="related-fave-initial" style="background:${esc(p.color||'#9A87D5')}">${esc(p.name.slice(0,1))}</span>`}</span><span class="related-fave-name">${esc(p.name)}</span></label>`).join('')}</div>${state.profiles.length>9?`<button type="button" class="btn small secondary" id="toggle-related-faves" aria-expanded="false">+ 더보기 (${state.profiles.length-9}명)</button>`:''}`:'<div class="note">커플룸에서 프로필을 등록하면 일정과 연결할 수 있어요.</div>'}<div class="stack"><label class="field">날짜<input type="date" name="date" required value="${e.date}"></label><label class="field">시간 (선택)<input type="time" name="time" value="${e.time}"></label></div><label class="field">일정 종류<select name="category">${['기념일','공연','굿즈','방송','기타'].map(v=>`<option ${e.category===v?'selected':''}>${v}</option>`).join('')}</select></label><label class="field">반복 (일회성 일정은 해당 연도에만 표시)<select name="repeat">${[['none','없음'],['weekly','매주'],['monthly','매월'],['yearly','매년']].map(([v,n])=>`<option value="${v}" ${e.repeat===v?'selected':''}>${n}</option>`).join('')}</select></label><label class="field">표시 방식<select name="display">${[['default','전체 설정 따르기'],['dot','점'],['text','제목'],['photo','사진']].map(([v,n])=>`<option value="${v}" ${e.display===v?'selected':''}>${n}</option>`).join('')}</select></label><label class="field">사진 형태<select name="shape">${[['default','전체 설정 따르기'],['circle','동그란 사진'],['square','네모난 사진'],['background','날짜 칸 배경']].map(([v,n])=>`<option value="${v}" ${e.shape===v?'selected':''}>${n}</option>`).join('')}</select></label><div class="grid2"><label class="field">달력 점 색상<input type="color" name="dotColor" value="${esc(e.dotColor||((e.kind==='personal'?state.personalColor:profile(e.profileIds[0])?.color)||'#6E9FD4'))}"></label><label class="field">일정 목록 선 색상<input type="color" name="lineColor" value="${esc(e.lineColor||((e.kind==='personal'?state.personalColor:profile(e.profileIds[0])?.color)||'#6E9FD4'))}"></label></div><div class="note">각 일정마다 점과 세로선 색을 따로 지정할 수 있어요.</div><label class="field">일정 전용 사진 (선택)<input type="file" name="photo" accept="image/*"></label><label class="field">상세 화면의 큰 사진 (선택)<input type="file" name="detailPhoto" accept="image/*"></label>${e.detailPhoto?`<img class="detail-photo" src="${esc(e.detailPhoto)}" alt="등록된 상세 사진"><label><input type="checkbox" name="removeDetailPhoto"> 큰 사진 삭제</label>`:''}<label class="field">바로가기 사이트 주소 (https://...)<input type="url" name="link" inputmode="url" placeholder="https://example.com" value="${esc(e.link||'')}"></label><label class="field">메모<textarea name="memo" rows="3">${esc(e.memo)}</textarea></label><div class="row"><button type="button" class="btn secondary" data-close>취소</button>${id?'<button type="button" class="btn danger" data-delete-event>삭제</button>':''}<button type="submit" class="btn">저장</button></div></form>`);let form=document.getElementById('event-form');
+ const more=form.querySelector('#toggle-related-faves');
+ more?.addEventListener('click',()=>{
+  const expanded=more.getAttribute('aria-expanded')!=='true';
+  form.querySelectorAll('.related-extra').forEach(el=>el.hidden=!expanded);
+  more.setAttribute('aria-expanded',String(expanded));
+  more.textContent=expanded?'접기':'+ 더보기 ('+form.querySelectorAll('.related-extra').length+'명)';
+ });
+ form.addEventListener('submit',async ev=>{ev.preventDefault();let fd=new FormData(form);let next={...e,name:fd.get('name').trim(),date:fd.get('date'),time:fd.get('time'),category:fd.get('category'),kind:fd.get('kind'),repeat:fd.get('repeat'),display:fd.get('display'),shape:fd.get('shape'),dotColor:fd.get('dotColor'),lineColor:fd.get('lineColor'),memo:fd.get('memo'),link:fd.get('link').trim(),profileIds:fd.get('kind')==='personal'?[]:fd.getAll('profile')};if(form.photo.files[0])next.photo=await shrink(form.photo.files[0]);if(fd.get('removeDetailPhoto'))next.detailPhoto='';if(form.detailPhoto.files[0])next.detailPhoto=await shrinkLarge(form.detailPhoto.files[0]);if(id)state.events=state.events.map(q=>q.id===id?next:q);else state.events.push(next);ui.day=next.date;ui.month=new Date(next.date+'T12:00:00');ui.month.setDate(1);save();closeModal();ui.tab='calendar';render()});form.querySelector('[data-delete-event]')?.addEventListener('click',()=>deleteEventById(id))}
+function shrink(file){return new Promise((resolve,reject)=>{let reader=new FileReader();reader.onload=()=>{let img=new Image();img.onload=()=>{let s=Math.min(1,420/Math.max(img.width,img.height));let c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.72))};img.onerror=()=>reject(Error('사진을 읽을 수 없어요'));img.src=reader.result};reader.onerror=()=>reject(Error('사진을 읽을 수 없어요'));reader.readAsDataURL(file)})}
+async function shrinkLarge(file){const data=await shrink(file);return data}function deleteEventById(id){const item=state.events.find(x=>x.id===id);if(!item)return;const question=item.repeat&&item.repeat!=='none'?`반복 일정 ‘${esc(item.name)}’의 모든 반복 날짜를 삭제할까요?`:`일정 ‘${esc(item.name)}’을 삭제할까요?`;closeModal();showModal(`<div class="stack"><h2>일정 삭제</h2><p>${question}</p><div class="row"><button class="btn secondary" type="button" data-close>취소</button><button class="btn danger" type="button" id="confirm-delete-event">삭제하기</button></div></div>`);document.getElementById('confirm-delete-event').onclick=()=>{const previous=state.events;state.events=previous.filter(x=>x.id!==id);if(!save()){state.events=previous;return}closeModal();render()}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-quick-delete]');if(!b)return;e.preventDefault();e.stopPropagation();deleteEventById(b.dataset.quickDelete);},true);
+document.addEventListener('click',e=>{let t=e.target.closest('[data-tab],[data-move],[data-day],[data-filter],[data-add],[data-edit-event],[data-add-profile],[data-edit-profile],[data-close],[data-preset],[data-color],[data-add-folder],[data-edit-folder]');if(!t)return;if('addFolder'in t.dataset){editFolder(null)}else if(t.dataset.editFolder){editFolder(t.dataset.editFolder)}else if(t.dataset.tab){if(t.dataset.tab==='add')editEvent(null);else{ui.tab=t.dataset.tab;if(ui.tab!=='profiles')ui.coupleDetail='';if(ui.tab!=='settings')ui.reminderPage=false;render()}}else if(t.dataset.move){ui.month=new Date(ui.month.getFullYear(),ui.month.getMonth()+Number(t.dataset.move),1);render()}else if(t.dataset.day){const date=t.dataset.day,now=Date.now();if(lastDayTap.date===date&&now-lastDayTap.time<420){lastDayTap={date:'',time:0};ui.day=date;render();openDay(date)}else{lastDayTap={date,time:now};ui.day=date;render()}}else if(t.dataset.filter){ui.filter=t.dataset.filter;if(t.hasAttribute('data-goto-calendar'))ui.tab='calendar';render()}else if(t.dataset.add)editEvent(null,t.dataset.add);else if(t.dataset.editEvent)eventDetail(t.dataset.editEvent);else if('addProfile'in t.dataset)editProfile(null);else if(t.dataset.editProfile)editProfile(t.dataset.editProfile);else if('close'in t.dataset)closeModal();else if(t.dataset.preset){state.theme=presets.find(p=>p[0]===t.dataset.preset).slice(1);save();render()}else if(t.dataset.color){let input=document.querySelector('#profile-form input[name="color"]');if(input){input.value=t.dataset.color;document.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('chosen',x.dataset.color===t.dataset.color))}}});document.addEventListener('change',async e=>{if(e.target.hasAttribute('data-personal-color')){state.personalColor=e.target.value;save();render()}if(e.target.hasAttribute('data-personal-theme')){state.personalTheme=state.personalTheme||['#6DB6A5','#EFFAF6','#C5E9DD'];state.personalTheme[+e.target.dataset.personalTheme]=e.target.value;save();render()}if(e.target.dataset.theme!==undefined){state.theme[+e.target.dataset.theme]=e.target.value;save();render()}if(e.target.id==='display'){state.display=e.target.value;save();render()}if(e.target.id==='shape'){state.photoShape=e.target.value;save();render()}if(e.target.id==='import'){let file=e.target.files[0];if(!file)return;try{let obj=JSON.parse(await file.text());if(!Array.isArray(obj.profiles)||!Array.isArray(obj.events)||!Array.isArray(obj.theme))throw Error('형식 오류');if(await askConfirm('현재 기록을 백업 파일 내용으로 교체할까요?')){state=obj;state.folders=Array.isArray(state.folders)?state.folders:[];state.personalColor=state.personalColor||'#6DB6A5';state.checkins=Array.isArray(state.checkins)?state.checkins:[];state.expenses=Array.isArray(state.expenses)?state.expenses:[];state.attendanceApps=Array.isArray(state.attendanceApps)?state.attendanceApps:[];state.attendanceCategories=Array.isArray(state.attendanceCategories)?state.attendanceCategories:['게임','채팅','기타'];state.attendanceLogs=state.attendanceLogs&&typeof state.attendanceLogs==='object'?state.attendanceLogs:{};state.fanBudget=state.fanBudget&&typeof state.fanBudget==='object'?state.fanBudget:{monthly:0};state.appearance=state.appearance&&typeof state.appearance==='object'?state.appearance:{mode:'light',textColor:'#283342',panelOpacity:86};state.reminders=state.reminders&&typeof state.reminders==='object'?state.reminders:{enabled:true,days7:true,days1:true,attendance:true,attendanceHour:20,attendanceTimes:['22:00','23:30','23:45'],mutedProfiles:[],mutedEvents:[],mutedApps:[]};state.profiles.forEach(p=>{if(!('folderId'in p))p.folderId=''});state.coupleListOrder=Array.isArray(state.coupleListOrder)?state.coupleListOrder:[];state.coupleSlots=state.coupleSlots||{representative:state.coupleRepresentative||'',one:(state.couplePinned||[])[0]||'',two:(state.couplePinned||[])[1]||'',three:(state.couplePinned||[])[2]||''};save();ui.filter='all';render()}}catch{alert('올바른 My Faves 백업 파일이 아니에요.')}}});document.addEventListener('change',async e=>{let t=e.target,prefix=t.dataset.photoFile;if(prefix!==undefined){let file=t.files?.[0];if(!file)return;try{let src=await shrink(file);let obj={...(getPhoto(prefix)||{}),src,area:getPhoto(prefix)?.area||'full',filter:getPhoto(prefix)?.filter||'light',opacity:getPhoto(prefix)?.opacity??55};if(prefix!=='global'&&prefix!=='personal'){let form=document.getElementById('folder-form');if(form){form.dataset.pendingPhoto=JSON.stringify(obj);t.closest('.photo-settings').querySelector('.note').textContent='사진 선택 완료! 폴더를 저장하면 적용돼요.'}return}setPhoto(prefix,obj)}catch(err){alert('사진을 처리하지 못했어요. 다른 사진으로 시도해 주세요.')}}else if(t.dataset.photoArea!==undefined||t.dataset.photoFilter!==undefined){let k=t.dataset.photoArea!==undefined?'area':'filter',id=t.dataset.photoArea??t.dataset.photoFilter;if(id!=='global'&&id!=='personal'){let form=document.getElementById('folder-form');let obj=JSON.parse(form.dataset.pendingPhoto||'{}');obj[k]=t.value;form.dataset.pendingPhoto=JSON.stringify(obj);return}let obj={...(getPhoto(id)||{src:'',area:'full',filter:'light',opacity:55}),[k]:t.value};setPhoto(id,obj)}});
+document.addEventListener('input',e=>{let id=e.target.dataset.photoOpacity;if(id===undefined)return;let n=+e.target.value;e.target.closest('.photo-settings').querySelector('[data-opacity-label]').textContent=n+'%';if(id!=='global'&&id!=='personal'){let form=document.getElementById('folder-form');let obj=JSON.parse(form.dataset.pendingPhoto||'{}');obj.opacity=n;form.dataset.pendingPhoto=JSON.stringify(obj);return}let obj={...(getPhoto(id)||{src:'',area:'full',filter:'light',opacity:55}),opacity:n};if(id==='global')state.photoTheme=obj;else if(id==='personal')state.personalPhotoTheme=obj;save();let preview=e.target.closest('.photo-settings').querySelector('.photo-preview');if(preview&&obj.src)preview.style.backgroundImage=photoCSS(obj);applyTheme()});
+document.addEventListener('click',async e=>{let b=e.target.closest('[data-photo-remove]');if(!b)return;let id=b.dataset.photoRemove;if(id!=='global'&&id!=='personal'){let form=document.getElementById('folder-form');form.dataset.pendingPhoto=JSON.stringify({src:'',area:'full',filter:'light',opacity:55});b.closest('.photo-settings').querySelector('.photo-preview')?.remove();b.remove();return}if(await askConfirm('이 테마의 배경 사진을 제거할까요?'))setPhoto(id,null)});
+document.addEventListener('change',e=>{const k=e.target.dataset.appearance;if(k===undefined)return;state.appearance[k]=k==='panelOpacity'?Number(e.target.value):e.target.value;if(k==='mode'){state.appearance.textColor=state.appearance.mode==='dark'?'#F7F5FF':'#283342'}save();render()});
+document.addEventListener('input',e=>{if(e.target.dataset.appearance!=='panelOpacity')return;state.appearance.panelOpacity=Number(e.target.value);document.getElementById('panel-opacity-value').textContent=e.target.value+'%';save();applyTheme()});
+document.addEventListener('click',e=>{if(!e.target.closest('[data-reset-text]'))return;state.appearance.textColor=state.appearance.mode==='dark'?'#F7F5FF':'#283342';save();render()});
+document.addEventListener('click',e=>{if(e.target.id==='export'){let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-faves-backup-'+iso(today)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}});render();
+
+/* Daily diary: multiple posts per date, photos, themes and sticker accents */
+state.dailyPosts=Array.isArray(state.dailyPosts)?state.dailyPosts:[];
+function feedPostCard(post){
+ const linked=state.events.find(e=>e.id===post.eventId),who=profile(post.profileId);
+ const photos=Array.isArray(post.photos)?post.photos:[];
+ return `<article class="feed-card ${post.theme==='scrap'?'scrap':post.theme==='dark'?'dark':''}">
+ <div class="feed-pad"><div class="muted" style="font-size:11px">MY DAILY STORY · ${esc(post.date)}</div><strong>${esc(post.title||'오늘의 기록')} ${esc(post.mood||'💜')}</strong></div>
+ ${photos.length?`<div class="feed-media"><div class="feed-photos">${photos.map((pic,i)=>`<img src="${pic}" alt="기록 사진 ${i+1}" loading="lazy">`).join('')}</div>${post.sticker?`<span class="feed-sticker">${esc(post.sticker)}</span>`:''}</div>`:''}
+ <div class="feed-pad"><div class="feed-caption">${esc(post.body||'')}</div>${post.tags?`<div class="feed-tag">${esc(post.tags)}</div>`:''}
+ ${who?`<div class="feed-tag">♡ ${esc(who.name)}</div>`:''}${linked?`<div class="feed-tag">📅 ${esc(linked.name)}</div>`:''}
+ <div class="feed-actions"><button class="btn small secondary" data-feed-edit="${esc(post.id)}">수정</button><button class="btn small danger" data-feed-delete="${esc(post.id)}">삭제</button></div></div></article>`;
+}
+function feedDay(date){const posts=state.dailyPosts.filter(p=>p.date===date).slice().sort((a,b)=>b.created-a.created);return `<div class="stack"><div class="row"><strong>📸 하루 피드 · ${posts.length}개</strong><button class="btn small" data-feed-add="${date}">+ 오늘의 기록</button></div>${posts.map(feedPostCard).join('')||'<div class="empty">아직 피드가 없어요. 사진이나 일기를 남겨 보세요 ♡</div>'}</div>`}
+const oldOpenDay=openDay;
+openDay=function(date){oldOpenDay(date);const modal=document.getElementById('modal');const root=modal.querySelector('.day-modal');if(root){root.insertAdjacentHTML('beforeend',feedDay(date));modal.dataset.day=date}}
+function feedEditor(id,date){
+ const old=state.dailyPosts.find(p=>p.id===id),post=old||{id:uid(),date,title:'',body:'',tags:'',mood:'💜',theme:'scrap',sticker:'✨',profileId:'',eventId:'',photos:[],created:Date.now()};
+ const choices=state.events.filter(e=>occurrence(e,post.date));
+ showModal(`<div class="feed-form stack"><h2>${old?'피드 수정':'하루 피드 작성'} ♡</h2><form id="feed-form" class="stack">
+ <label class="field">날짜<input type="date" name="date" required value="${esc(post.date)}"></label>
+ <label class="field">제목<input name="title" maxlength="80" placeholder="오늘의 기록 ♡" value="${esc(post.title)}"></label>
+ <label class="field">일기<textarea name="body" rows="5" placeholder="오늘의 이야기를 적어 봐요">${esc(post.body)}</textarea></label>
+ <label class="field">해시태그<input name="tags" placeholder="#덕질일기 #최애" value="${esc(post.tags)}"></label>
+ <div class="row"><label class="field">기분<select name="mood">${['💜','🥰','😭','✨','😴','🔥','🎂','💕'].map(x=>`<option ${post.mood===x?'selected':''}>${x}</option>`).join('')}</select></label>
+ <label class="field">꾸미기<select name="theme">${[['simple','심플'],['scrap','스크랩북'],['dark','다크']].map(([v,t])=>`<option value="${v}" ${post.theme===v?'selected':''}>${t}</option>`).join('')}</select></label></div>
+ <label class="field">스티커<select name="sticker">${['','✨','🎀','💜','🌸','🎂','⭐','🦋','💌'].map(x=>`<option value="${x}" ${post.sticker===x?'selected':''}>${x||'없음'}</option>`).join('')}</select></label>
+ <label class="field">관련 최애<select name="profileId"><option value="">선택 안 함</option>${state.profiles.map(p=>`<option value="${esc(p.id)}" ${p.id===post.profileId?'selected':''}>${esc(p.name)}</option>`).join('')}</select></label>
+ <label class="field">연결할 일정<select name="eventId"><option value="">연결 안 함</option>${choices.map(e=>`<option value="${esc(e.id)}" ${e.id===post.eventId?'selected':''}>${esc(e.name)}</option>`).join('')}</select></label>
+ <label class="field">사진 추가 (여러 장 가능)<input type="file" id="feed-files" accept="image/*" multiple></label>
+ <div class="note">사진은 최대 5장까지 저장해요. 모바일 저장 공간에 따라 사진이 많으면 저장되지 않을 수 있어요.</div>
+ <div class="feed-preview">${(post.photos||[]).map(pic=>`<img src="${pic}" alt="저장된 사진">`).join('')}</div>
+ ${old&&post.photos?.length?'<label><input type="checkbox" name="removePhotos"> 기존 사진 모두 지우기</label>':''}
+ <div class="row"><button type="button" class="btn secondary" data-close>취소</button><button type="submit" class="btn">저장</button></div></form></div>`);
+ document.getElementById('feed-form').onsubmit=async ev=>{
+  ev.preventDefault();const form=ev.currentTarget,fd=new FormData(form),files=[...document.getElementById('feed-files').files];
+  if(files.length>5){alert('사진은 최대 5장까지 선택할 수 있어요.');return}
+  const btn=form.querySelector('[type=submit]');btn.disabled=true;btn.textContent='저장 중…';
+  try{
+   let photos=fd.get('removePhotos')?[]:[...(post.photos||[])];
+   for(const file of files){photos.push(await feedImage(file))}
+   if(photos.length>5){alert('기존 사진을 포함해 최대 5장까지 저장할 수 있어요.');return}
+   const next={...post,date:fd.get('date'),title:fd.get('title').trim(),body:fd.get('body').trim(),tags:fd.get('tags').trim(),mood:fd.get('mood'),theme:fd.get('theme'),sticker:fd.get('sticker'),profileId:fd.get('profileId'),eventId:fd.get('eventId'),photos};
+   const previous=state.dailyPosts.slice();state.dailyPosts=old?previous.map(p=>p.id===old.id?next:p):[...previous,next];
+   if(!save()){state.dailyPosts=previous;return}
+   openDay(next.date);
+  }catch(error){alert('사진을 처리하지 못했어요. 다른 사진을 선택해 주세요.')}finally{btn.disabled=false;btn.textContent='저장'}
+ };
+}
+function feedImage(file){return new Promise((resolve,reject)=>{
+ const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{const scale=Math.min(1,720/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.67))};img.src=reader.result};reader.readAsDataURL(file)
+})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-feed-add],[data-feed-edit],[data-feed-delete]');if(!b)return;
+ if(b.dataset.feedAdd)feedEditor(null,b.dataset.feedAdd);
+ else if(b.dataset.feedEdit){const p=state.dailyPosts.find(x=>x.id===b.dataset.feedEdit);if(p)feedEditor(p.id,p.date)}
+ else if(b.dataset.feedDelete){const p=state.dailyPosts.find(x=>x.id===b.dataset.feedDelete);if(!p)return;showModal(`<div class="stack"><h2>기록을 삭제할까요?</h2><div>${esc(p.title||'오늘의 기록')}</div><div class="row"><button class="btn secondary" data-feed-cancel="${esc(p.date)}">취소</button><button class="btn danger" data-feed-confirm="${esc(p.id)}">삭제하기</button></div></div>`)}
+});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-feed-cancel],[data-feed-confirm]');if(!b)return;
+ if(b.dataset.feedCancel)openDay(b.dataset.feedCancel);
+ else {const p=state.dailyPosts.find(x=>x.id===b.dataset.feedConfirm);if(!p)return;const prev=state.dailyPosts.slice();state.dailyPosts=prev.filter(x=>x.id!==p.id);if(!save()){state.dailyPosts=prev;return}openDay(p.date)}
+});
+
+/* v3.5.14: unified mobile-friendly photo crop editor */
+const cropProcessed=new WeakSet();
+document.addEventListener('change',async function cropIntercept(e){
+ const input=e.target;
+ if(!input.matches('input[type="file"][accept*="image/"]')||cropProcessed.has(input))return;
+ if(!input.files?.length)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ const original=[...input.files];
+ try{
+  const edited=[];
+  for(let i=0;i<original.length;i++)edited.push(await openImageCropper(original[i],i+1,original.length));
+  if(edited.some(x=>!x)){input.value='';return}
+  const dt=new DataTransfer();edited.forEach(f=>dt.items.add(f));input.files=dt.files;
+  cropProcessed.add(input);
+  input.dispatchEvent(new Event('change',{bubbles:true}));
+  cropProcessed.delete(input);
+ }catch(err){cropProcessed.delete(input);input.value='';alert('사진 편집 중 문제가 발생했어요. '+err.message)}
+},true);
+function openImageCropper(file,index,total){return new Promise((resolve,reject)=>{
+ const url=URL.createObjectURL(file),img=new Image();
+ img.onerror=()=>{URL.revokeObjectURL(url);reject(Error('이미지를 열 수 없어요'))};
+ img.onload=()=>{
+  const overlay=document.createElement('div');overlay.className='crop-overlay';
+  overlay.innerHTML=`<div class="crop-card"><h2>✂️ 사진 편집 ${total>1?`(${index}/${total})`:''}</h2><div class="crop-stage"><canvas class="crop-canvas" width="600" height="600"></canvas></div><div class="crop-controls"><label>자르기 비율<select class="crop-ratio"><option value="free">원본 비율</option><option value="1">1:1 정사각형</option><option value="0.75">3:4 세로</option><option value="1.333333">4:3 가로</option><option value="1.777777">16:9 가로</option></select></label><label>확대 / 축소<input class="crop-zoom" type="range" min="1" max="4" value="1" step="0.05"></label><div class="note">사진을 손가락으로 끌어 원하는 위치로 이동하세요.</div></div><div class="row"><button type="button" class="btn secondary crop-cancel">취소</button><button type="button" class="btn secondary crop-original">원본 사용</button><button type="button" class="btn crop-done">적용</button></div></div>`;
+  document.body.appendChild(overlay);
+  const canvas=overlay.querySelector('canvas'),ctx=canvas.getContext('2d'),ratio=overlay.querySelector('.crop-ratio'),zoom=overlay.querySelector('.crop-zoom');
+  let ox=0,oy=0,drag=null;
+  const sourceRatio=img.naturalWidth/img.naturalHeight;
+  function draw(){
+   const ar=ratio.value==='free'?sourceRatio:Number(ratio.value),w=600,h=Math.round(600/ar);
+   canvas.width=w;canvas.height=h;
+   const base=Math.max(w/img.naturalWidth,h/img.naturalHeight),scale=base*Number(zoom.value),dw=img.naturalWidth*scale,dh=img.naturalHeight*scale;
+   ox=Math.max((w-dw)/2,Math.min((dw-w)/2,ox));oy=Math.max((h-dh)/2,Math.min((dh-h)/2,oy));
+   ctx.clearRect(0,0,w,h);ctx.drawImage(img,(w-dw)/2+ox,(h-dh)/2+oy,dw,dh);
+  }
+  ratio.onchange=()=>{ox=0;oy=0;draw()};zoom.oninput=draw;
+  canvas.addEventListener('pointerdown',ev=>{drag={x:ev.clientX,y:ev.clientY,ox,oy};canvas.setPointerCapture(ev.pointerId)});
+  canvas.addEventListener('pointermove',ev=>{if(!drag)return;const rect=canvas.getBoundingClientRect();ox=drag.ox+(ev.clientX-drag.x)*canvas.width/rect.width;oy=drag.oy+(ev.clientY-drag.y)*canvas.height/rect.height;draw()});
+  canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);
+  const finish=value=>{overlay.remove();URL.revokeObjectURL(url);resolve(value)};
+  overlay.querySelector('.crop-cancel').onclick=()=>finish(null);
+  overlay.querySelector('.crop-original').onclick=()=>finish(file);
+  overlay.querySelector('.crop-done').onclick=()=>{canvas.toBlob(blob=>{if(!blob){reject(Error('사진 저장에 실패했어요'));overlay.remove();URL.revokeObjectURL(url);return}finish(new File([blob],file.name.replace(/\.[^.]+$/,'')+'-edited.jpg',{type:'image/jpeg'}))},'image/jpeg',0.88)};
+  draw();
+ };img.src=url;
+})}
+</script><script>if ("serviceWorker" in navigator && location.protocol === "https:") { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Offline setup unavailable", err))); }</script></body></html>
