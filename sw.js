@@ -1,4 +1,4 @@
-const CACHE = 'my-faves-shell-v3-5-23-nested-folders-20261123';
+const CACHE = 'my-faves-shell-v3-5-21-crop-top-layer-20261123';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', event => {event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));});
 self.addEventListener('activate', event => {event.waitUntil(Promise.all([caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('my-faves-shell-') && key !== CACHE).map(key => caches.delete(key)))),self.clients.claim()]));});
