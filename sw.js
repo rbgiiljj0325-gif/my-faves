@@ -1,4 +1,4 @@
-const CACHE = 'my-faves-shell-v3-5-28-journal-20261124';
+const CACHE = 'my-faves-shell-v3-5-31-fixed-cost-calculator-20261124';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', event => {event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));});
 self.addEventListener('activate', event => {event.waitUntil(Promise.all([caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('my-faves-shell-') && key !== CACHE).map(key => caches.delete(key)))),self.clients.claim()]));});
